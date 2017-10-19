@@ -1,0 +1,1 @@
+DELETE peliculas WHERE id_pelicula = 0;
