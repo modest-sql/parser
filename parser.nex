@@ -1,0 +1,22 @@
+/[ \t\n]/   { /* Skip white space */ }
+/[0-9]+/    { lval.int_t, _ = strconv.Atoi(yylex.Text()); return NUM }
+/\+/        { return '+' }
+/\-/        { return '-' }
+/\*/        { return '*' }
+/\//        { return '/' }
+/\(/        { return '(' }
+/\)/        { return ')' }
+/./         { panic(fmt.Sprintf("Unexpected token '%s'", yylex.Text())) }
+//
+
+package main
+
+import (
+    "os"
+    "strconv"
+    "fmt"
+)
+
+func main() {
+    yyParse(NewLexer(os.Stdin))
+}
