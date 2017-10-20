@@ -1,17 +1,22 @@
 %{
 package main
 import "fmt"
+
 %}
 
 %union {
     int_t int
+    string_t string
 }
 
 %type<int_t> expression term factor
 
-%token '+' '-' '*' '/' '(' ')'
+%token '+' '-' '*' '/' '(' ')' ',' '.' ';' '=' '<' '>' TK_GTE TK_LTE TK_NE KW_OR KW_AND KW_NOT KW_INTEGER KW_CHAR 
+%token KW_CREATE KW_TABLE KW_DELETE KW_INSERT KW_INTO KW_SELECT KW_WHERE KW_FROM KW_UPDATE KW_SET TK_WORD
+%token KW_VALUE
 
 %token<int_t> NUM
+%token<string_t> TK_WORD
 
 %%
 
