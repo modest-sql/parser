@@ -6,6 +6,7 @@
 /\//        { return '/' }
 /\(/        { return '(' }
 /\)/        { return ')' }
+/select/  {}
 /./         { panic(fmt.Sprintf("Unexpected token '%s'", yylex.Text())) }
 //
 
