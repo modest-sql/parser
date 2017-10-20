@@ -3,4 +3,5 @@
 !*.y
 !samples/*.sql
 !.gitignore
+!Makefile
 !LICENSE
