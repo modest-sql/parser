@@ -5,7 +5,7 @@ LEXER_SRC=parser.nn.go
 .PHONY: clean
 
 $(TARGET): $(PARSER_SRC) $(LEXER_SRC)
-	go build
+	go build -o $(TARGET)
 
 $(PARSER_SRC): parser.y
 	goyacc $<
