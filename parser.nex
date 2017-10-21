@@ -51,7 +51,10 @@
 /[aA][uU][tT][oO]_[iI][nN][cC][rR][eE][mM][eE][nN][tT]/{ return KW_AUTO_INCREMENT}
 /[a-zA-Z][a-zA-Z0-9_]*/ { return TK_ID }
 /[^"]*/ { lval.string_t = yylex.Text();  return TK_WORD }
-/./         { panic(fmt.Sprintf("Unexpected token '%s'", yylex.Text())) }
+/./         {
+                fmt.Printf(yylex.Text())
+                //panic(fmt.Sprintf("There's an unexpected token '%s' here", yylex.Text()))
+            }
 //
 
 package main
