@@ -6,7 +6,11 @@
 /\//        { return '/' }
 /\(/        { return '(' }
 /\)/        { return ')' }
-/./         { panic(fmt.Sprintf("Unexpected token '%s'", yylex.Text())) }
+/SELECT|select/    { return KW_SELECT }
+/./         {
+                fmt.Printf(yylex.Text())
+                //panic(fmt.Sprintf("There's an unexpected token '%s' here", yylex.Text()))
+            }
 //
 
 package main

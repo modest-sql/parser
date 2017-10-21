@@ -1,4 +1,4 @@
-TARGET=parser
+TARGET=parser.exe
 PARSER_SRC=y.go
 LEXER_SRC=parser.nn.go
 
