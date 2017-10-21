@@ -36,7 +36,9 @@
 /[wW][hH][eE][rR][eE]/ { return KW_WHERE }
 /[fF][rR][oO][mM]/ { return KW_FROM }
 /[sS][eE][tT]/ { return KW_SET }
-/[iI][nN][nN][eE][rR] [jJ][oO][iI][nN]/ { return KW_INNER_JOIN }
+/[dD][rR][oO][pP]/ { return KW_DROP }
+/[iI][nN][nN][eE][rR]/ { return KW_INNER }
+/[jJ][oO][iI][nN]/ {return KW_JOIN   }
 /[hH][aA][vV][iI][nN][gG]/ { return KW_HAVING }
 /[sS][uU][mM]/ { return KW_SUM }
 /[cC][oO][uU][nN][tT]/ { return KW_COUNT }
