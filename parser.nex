@@ -7,7 +7,7 @@
 /\//        { return '/' }
 /\(/        { return '(' }
 /\)/        { return ')' }
-/['"]/      { return '\'' }
+/\"/        { return TK_QUOTES }
 /\./        { return '.' }
 /\;/        { return ';' }
 /\,/        { return ',' }
@@ -16,7 +16,10 @@
 /\>/        { return '>' }
 />=/        { return TK_GTE }
 /<=/        { return TK_LTE }
-/!=/        { return TK_NE }
+/<>/        { return TK_NE }
+
+/[lL][iI][kK][eE]/ { return KW_LIKE }
+/[bB][eE][tT][wW][eE][eE][nN]/ { return KW_BETWEEN }
 /[aA][nN][dD]/ { return KW_AND }
 /[oO][rR]/  { return KW_OR }
 /[nN][oO][tT]/ { return KW_NOT }
@@ -33,7 +36,20 @@
 /[wW][hH][eE][rR][eE]/ { return KW_WHERE }
 /[fF][rR][oO][mM]/ { return KW_FROM }
 /[sS][eE][tT]/ { return KW_SET }
-/[a-zA-Z][a-zA-Z0-9_]*/ { lval.string_t = yylex.Text();  return TK_WORD }
+/[iI][nN][nN][eE][rR] [jJ][oO][iI][nN]/ { return KW_INNER_JOIN }
+/[hH][aA][vV][iI][nN][gG]/ { return KW_HAVING }
+/[sS][uU][mM]/ { return KW_SUM }
+/[cC][oO][uU][nN][tT]/ { return KW_COUNT }
+/[aA][vV][gG]/ { return KW_AVG }
+/[mM][iI][nN]/ { return KW_MIN }
+/[mM][aA][xX]/ { return KW_MAX }
+/[aA][lL][tT][eE][rR]/ { return KW_ALTER }
+/[nN][uU][lL][lL]/ { return KW_NULL }
+/[iI][nN]/ { return KW_IN }
+/[iI][sS]/ { return KW_IS }
+/[aA][uU][tT][oO]_[iI][nN][cC][rR][eE][mM][eE][nN][tT]/{ return KW_AUTO_INCREMENT}
+/[a-zA-Z][a-zA-Z0-9_]*/ { return TK_ID }
+/[^"]*/ { lval.string_t = yylex.Text();  return TK_WORD }
 /./         { panic(fmt.Sprintf("Unexpected token '%s'", yylex.Text())) }
 //
 
