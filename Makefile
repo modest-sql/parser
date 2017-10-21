@@ -11,7 +11,7 @@ $(PARSER_SRC): parser.y
 	goyacc $<
 
 $(LEXER_SRC): parser.nex
-	nex $<
+	nex -e $<
 
 run: $(TARGET)
 	./$< < input.txt

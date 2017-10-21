@@ -1,7 +1,8 @@
-%{
-package main
-import "fmt"
+/* Based on https://ronsavage.github.io/SQL/sql-2003-2.bnf.html */
 
+%{
+    package main
+    import "fmt"
 %}
 
 %union {
@@ -9,16 +10,13 @@ import "fmt"
     string_t string
 }
 
-
-
 %token '+' '-' '*' '/' '(' ')' ',' '.' ';' '=' '<' '>' TK_GTE TK_LTE TK_NE KW_OR KW_AND KW_NOT KW_INTEGER KW_CHAR 
 %token KW_CREATE KW_TABLE KW_DELETE KW_INSERT KW_INTO KW_SELECT KW_WHERE KW_FROM KW_UPDATE KW_SET TK_WORD
 %token KW_ALTER KW_VALUE KW_BETWEEN KW_LIKE KW_INNER  KW_HAVING KW_SUM KW_COUNT KW_AVG KW_MIN KW_MAX
-%token KW_NULL KW_IN  KW_IS TK_QUOTES KW_AUTO_INCREMENT TK_ID KW_JOIN KW_DROP
+%token KW_NULL KW_IN  KW_IS TK_QUOTES KW_AUTO_INCREMENT KW_JOIN KW_DROP
 
-%type<int_t> expression term factor
 %token<int_t> NUM
-%token<string_t> TK_WORD
+%token<string_t> TK_WORD TK_ID
 
 %%
 
@@ -30,22 +28,63 @@ statements_list: statements_list statement { fmt.Println("Hey there, I'm a state
     | statement { fmt.Println("Here's a statment"); }
 ;
 
-statement: expression { fmt.Printf("Result: %d\n", $1); }
-    | KW_SELECT { fmt.Println("Heres a SELECT statement"); }
+statement: data_statement { fmt.Printf("Data access statement found"); }
+    | schema_statement { fmt.Printf("Schema Definition/Manipulation statement found"); }
 ;
 
-expression: expression '+' term { $$ = $1 + $3; }
-    | expression '-' term { $$ = $1 - $3; }
-    | term
+schema_statement: create_statement { }
+    | alter_statement { }
+    | drop_statement { }
 ;
 
-term: term '*' factor { $$ = $1 * $3; }
-    | term '/' factor { $$ = $1 / $3; }
-    | factor
+data_statement: select_statement { }
+    | insert_statement { }
+    | delete_statement { }
+    | update_statement { }
 ;
 
-factor: NUM
-    | '(' expression ')' { $$ = $2; }  
-    | TK_ID {fmt.Print("es un id");}
-    | TK_WORD {fmt.Print("es un palabra");} 
+create_statement: KW_CREATE KW_TABLE TK_ID '(' table_element_list ')'  { }
+;
+
+table_element_list: table_element_list ',' table_element { fmt.Println("Heres a table element list"); }
+    | table_element { fmt.Println("Heres a table element"); }
+;
+
+table_element: column_definition { }
+;
+
+column_definition: TK_ID data_type column_constraint_list { }
+;
+
+data_type: KW_CHAR '(' NUM ')' { }
+    | KW_INTEGER { }
+;
+
+column_constraint_list: column_constraint_list column_constraint { }
+    | column_constraint { }
+    | 
+;
+
+column_constraint: constr_not_null { }
+;
+
+constr_not_null: KW_NOT KW_NULL { }
+;
+
+alter_statement: KW_ALTER { }
+;
+
+drop_statement: KW_DROP { }
+;
+
+select_statement: KW_SELECT { fmt.Println("Heres a SELECT statement"); }
+;
+
+insert_statement: KW_INSERT { }
+;
+
+delete_statement: KW_DELETE { }
+;
+
+update_statement: KW_UPDATE { }
 ;

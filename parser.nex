@@ -67,6 +67,11 @@ import (
     
 )
 
+func (yylex Lexer) Error(e string) {
+        fmt.Println("WE ERROR!!!")
+        panic(e)
+}
+
 func main() {
     yyParse(NewLexer(os.Stdin))
 }
