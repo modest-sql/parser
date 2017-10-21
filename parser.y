@@ -22,8 +22,16 @@ import "fmt"
 
 %%
 
-input: expression  input{ fmt.Printf("Result: %d\n", $1); }
+input: statements_list {  }
     | /* empty */
+;
+
+statements_list: statements_list statement { fmt.Println("Hey there, I'm a statements_list!"); }
+    | statement { fmt.Println("Here's a statment"); }
+;
+
+statement: expression { fmt.Printf("Result: %d\n", $1); }
+    | KW_SELECT { fmt.Println("Heres a SELECT statement"); }
 ;
 
 expression: expression '+' term { $$ = $1 + $3; }
