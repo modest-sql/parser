@@ -54,6 +54,7 @@
 /[^"]*/ { lval.string_t = yylex.Text();  return TK_WORD }
 /./         {
                 fmt.Printf(yylex.Text())
+                fmt.Printf("Unexpected token was found. ")
                 //panic(fmt.Sprintf("There's an unexpected token '%s' here", yylex.Text()))
             }
 //
@@ -66,11 +67,6 @@ import (
     "fmt"
     
 )
-
-func (yylex Lexer) Error(e string) {
-        fmt.Println("WE ERROR!!!")
-        panic(e)
-}
 
 func main() {
     yyParse(NewLexer(os.Stdin))
