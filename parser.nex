@@ -14,9 +14,9 @@
 /\=/        { return '=' }
 /\</        { return '<' }
 /\>/        { return '>' }
-/>=/        { return TK_GTE }
-/<=/        { return TK_LTE }
-/<>/        { return TK_NE }
+/\>=/        { return TK_GTE }
+/\<=/        { return TK_LTE }
+/\<\>/        { return TK_NE }
 
 /[lL][iI][kK][eE]/ { return KW_LIKE }
 /[bB][eE][tT][wW][eE][eE][nN]/ { return KW_BETWEEN }
