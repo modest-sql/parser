@@ -10,10 +10,15 @@
     string_t string
 }
 
-%token '+' '-' '*' '/' '(' ')' ',' '.' ';' '=' '<' '>' TK_GTE TK_LTE TK_NE KW_OR KW_AND KW_NOT KW_INTEGER KW_CHAR 
-%token KW_CREATE KW_TABLE KW_DELETE KW_INSERT KW_INTO KW_SELECT KW_WHERE KW_FROM KW_UPDATE KW_SET TK_WORD
-%token KW_ALTER KW_VALUES KW_BETWEEN KW_LIKE KW_INNER  KW_HAVING KW_SUM KW_COUNT KW_AVG KW_MIN KW_MAX
-%token KW_NULL KW_IN  KW_IS TK_QUOTES KW_AUTO_INCREMENT KW_JOIN KW_DROP KW_DEFAULT
+%token '+' '-' '*' '/' '(' ')' ',' '.' ';' '=' '<' '>'
+%token TK_GTE TK_LTE TK_NE
+%token KW_OR KW_AND KW_NOT KW_INTEGER KW_CHAR 
+%token KW_CREATE KW_TABLE KW_DELETE KW_INSERT
+%token KW_INTO KW_SELECT KW_WHERE KW_FROM KW_UPDATE KW_SET TK_WORD
+%token KW_ALTER KW_VALUES KW_BETWEEN KW_LIKE KW_INNER
+%token KW_HAVING KW_SUM KW_COUNT KW_AVG KW_MIN KW_MAX
+%token KW_NULL KW_IN  KW_IS KW_AUTO_INCREMENT KW_JOIN KW_DROP KW_DEFAULT
+%token KW_TRUE KW_FALSE
 
 %token<int_t> NUM
 %token<string_t> TK_WORD TK_ID
@@ -21,7 +26,7 @@
 %%
 
 input: statements_list {  }
-    | /* empty */
+    | { }
 ;
 
 statements_list: statements_list statement { fmt.Println("Hey there, I'm a statements_list!\n"); }
@@ -70,6 +75,7 @@ column_constraint: constr_not_null { }
 
 constr_not_null: KW_NOT KW_NULL { }
     | KW_DEFAULT value_literal { }
+    | KW_AUTO_INCREMENT { }
 ;
 
 alter_statement: KW_ALTER KW_TABLE { }
@@ -103,10 +109,62 @@ value_literal: TK_WORD
     | NUM
 ;
 
-delete_statement: KW_DELETE KW_TABLE TK_ID { }
+delete_statement: KW_DELETE KW_TABLE TK_ID where_clause { }
+;
+
+where_clause: KW_WHERE search_condition { }
+;
+
+search_condition: boolean_value_expression
 ;
 
 update_statement: KW_UPDATE { }
+;
+
+boolean_value_expression: boolean_value_expression KW_OR boolean_term { }
+    | boolean_term { }
+;
+
+boolean_term: boolean_term KW_AND boolean_factor { }
+    | boolean_factor { }
+;
+
+boolean_factor: KW_NOT relational_expression { }
+    | relational_expression { }
+;
+
+relational_expression: relational_expression '<' relational_term { }
+    | relational_expression '>' relational_term { }
+    | relational_expression TK_LTE relational_term { }
+    | relational_expression TK_GTE relational_term { }
+    | relational_expression TK_NE relational_term { }
+    | relational_expression KW_LIKE relational_term { }
+    | relational_expression KW_BETWEEN between_term { }
+    | relational_term { }
+;
+
+between_term: NUM KW_AND NUM { }
+;
+
+relational_term: relational_term '+' relational_factor { }
+    | relational_term '-' relational_factor { }
+    | relational_factor { }
+;
+
+relational_factor: relational_factor '*' addi_factor { }
+    | relational_factor '/' addi_factor { }
+    | addi_factor { }
+;
+
+addi_factor: NUM { }
+    | truth_value { }
+    | TK_ID { }
+    | '(' relational_expression ')' { }
+;
+
+truth_value: KW_TRUE { }
+    | KW_FALSE { }
+    | KW_NULL
 ;
 
 %%
