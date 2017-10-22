@@ -1,5 +1,6 @@
 
-/[ \t\n]/   { /* Skip white space */ }
+/[ \t\f\r\n]/   { /* Skip white space */ }
+
 /[0-9]+/    { lval.int_t, _ = strconv.Atoi(yylex.Text()); return NUM }
 /\+/        { return '+' }
 /\-/        { return '-' }
@@ -10,7 +11,7 @@
 /\"/        { return TK_QUOTES }
 /\./        { return '.' }
 /;/        { return ';' }
-/,/        { return ',' }
+/\,/        { return ',' }
 /=/        { return '=' }
 /\</        { return '<' }
 /\>/        { return '>' }
@@ -53,9 +54,8 @@
 /[a-zA-Z][a-zA-Z0-9_]*/ { return TK_ID }
 /'[^']*'/ { lval.string_t = yylex.Text();  return TK_WORD }
 /./         {
-                fmt.Printf(yylex.Text())
-                fmt.Printf("Unexpected token was found. ")
-                //panic(fmt.Sprintf("There's an unexpected token '%s' here", yylex.Text()))
+                fmt.Printf("There's an unexpected token '%s' here\n", yylex.Text())
+                fmt.Printf("Unexpected token was found. \n")
             }
 //
 

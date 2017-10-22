@@ -11,8 +11,7 @@
 }
 
 %token '+' '-' '*' '/' '(' ')' ',' '.' ';' '=' '<' '>' TK_GTE TK_LTE TK_NE KW_OR KW_AND KW_NOT KW_INTEGER KW_CHAR 
-%token KW_CREATE
-%token KW_TABLE KW_DELETE KW_INSERT KW_INTO KW_SELECT KW_WHERE KW_FROM KW_UPDATE KW_SET TK_WORD
+%token KW_CREATE KW_TABLE KW_DELETE KW_INSERT KW_INTO KW_SELECT KW_WHERE KW_FROM KW_UPDATE KW_SET TK_WORD
 %token KW_ALTER KW_VALUE KW_BETWEEN KW_LIKE KW_INNER  KW_HAVING KW_SUM KW_COUNT KW_AVG KW_MIN KW_MAX
 %token KW_NULL KW_IN  KW_IS TK_QUOTES KW_AUTO_INCREMENT KW_JOIN KW_DROP
 
@@ -25,15 +24,15 @@ input: statements_list {  }
     | /* empty */
 ;
 
-statements_list: statements_list statement {  }
+statements_list: statements_list statement { fmt.Println("Hey there, I'm a statements_list!\n"); }
     | statement { }
 ;
 
-statement: data_statement {  }
-    | schema_statement { }
+statement: data_statement { fmt.Printf("Data access statement found\n"); }
+    | schema_statement { fmt.Printf("Schema Definition/Manipulation statement found\n"); }
 ;
 
-schema_statement: create_statement { }
+schema_statement: create_statement {  }
     | alter_statement { }
     | drop_statement { }
 ;
@@ -44,22 +43,47 @@ data_statement: select_statement { }
     | update_statement { }
 ;
 
-create_statement: KW_CREATE KW_TABLE { fmt.Printf("Reading CREATE TABLE statement found"); }
+create_statement: KW_CREATE KW_TABLE TK_ID '(' table_element_list ')' ';'  {  }
 ;
 
-alter_statement: KW_ALTER { }
+table_element_list: table_element_list ',' table_element {  }
+    | table_element {  }
 ;
 
-drop_statement: KW_DROP { }
+table_element: column_definition {  }
 ;
 
-select_statement: KW_SELECT { fmt.Println("Heres a SELECT statement"); }
+column_definition: TK_ID data_type column_constraint_list {  }
+;
+
+data_type: KW_CHAR '(' NUM ')' { }
+    | KW_INTEGER { }
+;
+
+column_constraint_list: column_constraint_list column_constraint { }
+    | column_constraint { }
+    | { }
+;
+
+column_constraint: constr_not_null { }
+;
+
+constr_not_null: KW_NOT KW_NULL { }
+;
+
+alter_statement: KW_ALTER KW_TABLE { }
+;
+
+drop_statement: KW_DROP KW_TABLE TK_ID { }
+;
+
+select_statement: KW_SELECT  {  }
 ;
 
 insert_statement: KW_INSERT { }
 ;
 
-delete_statement: KW_DELETE { }
+delete_statement: KW_DELETE KW_TABLE TK_ID { }
 ;
 
 update_statement: KW_UPDATE { }
@@ -69,5 +93,5 @@ update_statement: KW_UPDATE { }
 %%
 
 func (l *Lexer) Error(s string) {
-	fmt.Printf("Syntax error Ln %d Col %d with: %s Error: %s\n", l.Line(), l.Column(), l.Text(), s)
+	fmt.Printf("Syntax error at Ln %d Col %d: %s with input %s\n", l.Line(), l.Column(), s, l.Text())
 }
