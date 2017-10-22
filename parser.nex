@@ -9,7 +9,7 @@
 /./         { panic(fmt.Sprintf("Unexpected token '%s'", yylex.Text())) }
 //
 
-package main
+package parser
 
 import (
     "os"
