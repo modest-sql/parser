@@ -24,6 +24,7 @@
 /[aA][nN][dD]/ { return KW_AND }
 /[oO][rR]/  { return KW_OR }
 /[nN][oO][tT]/ { return KW_NOT }
+/[dD][eE][fF][aA][uU][lT]/  { return KW_DEFAULT }
 /[iI][nN][tT][eE][gG][eE][rR]/ {  return KW_INTEGER }
 /[cC][hH][aA][rR]/ {return KW_CHAR }
 /[cC][rR][eE][aA][tT][eE]/ { return KW_CREATE }
@@ -31,7 +32,7 @@
 /[dD][eE][lL][eE][tT][eE]/ { return KW_DELETE }
 /[iI][nN][sS][eE][rR][tT]/ { return KW_INSERT }
 /[iI][nN][tT][oO]/ { return KW_INTO }
-/[vV][aA][lL][uU][eE]/ { return KW_VALUE }
+/[vV][aA][lL][uU][eE][sS]/ { return KW_VALUES }
 /[sS][eE][lL][eE][cC][tT]/ { return KW_SELECT }
 /[uU][pP][dD][aA][tT][eE]/ { return KW_UPDATE }
 /[wW][hH][eE][rR][eE]/ { return KW_WHERE }
