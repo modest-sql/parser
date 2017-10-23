@@ -67,7 +67,7 @@
 /[a-zA-Z][a-zA-Z0-9_]*/         { lval.string_t = yylex.Text(); return TK_ID }
 /'[^']*'/                       { lval.string_t =strings.Replace(yylex.Text(), "'", "", -1);  return STR_LIT }
 /./                             { 
-                                    panic(parserError{
+                                    panic(Error{
                                             line: yylex.Line() + 1,
                                             column: yylex.Column() + 1,
                                             message: fmt.Sprintf("Syntax Error: Unexpected token '%s'", yylex.Text()),

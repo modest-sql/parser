@@ -218,7 +218,7 @@ func init() {
 }
 
 func (l *Lexer) Error(s string) {
-	panic(parserError{
+	panic(Error{
         line: l.Line() + 1,
         column: l.Column() + 1,
         message: s,
