@@ -1,4 +1,5 @@
 /[ \t\f\r\n]/   { /* Skip white space */ }
+/--[^\n]*/      { /* Single line comment */ }
 
 /[0-9]+/    { lval.int_t, _ = strconv.Atoi(yylex.Text()); return NUM }
 /\+/        { return '+' }

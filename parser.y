@@ -13,6 +13,7 @@ import (
 %union {
     int_t int
     string_t string
+    float_t float64
 }
 
 %token '+' '-' '*' '/' '(' ')' ',' '.' ';' '=' '<' '>'

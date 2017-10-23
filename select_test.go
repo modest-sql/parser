@@ -1,8 +1,10 @@
-package parser
+package parser_test
 
 import (
 	"os"
 	"testing"
+
+	"github.com/modest-sql/parser"
 )
 
 func TestSelect(t *testing.T) {
@@ -11,7 +13,7 @@ func TestSelect(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := Parse(sqlFile); err != nil {
+	if err := parser.Parse(sqlFile); err != nil {
 		t.Error(err)
 	}
 }
