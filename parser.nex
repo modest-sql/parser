@@ -4,18 +4,18 @@
 /[0-9]+\.[0-9]+/ { lval.float_t, _ = strconv.ParseFloat(yylex.Text(), 64); return FLOAT_LIT }
 /[0-9]+/    { lval.int_t, _ = strconv.Atoi(yylex.Text()); return INT_LIT }
 
-/\+/        { return '+' }
-/\-/        { return '-' }
-/\*/        { return '*' }
-/\//        { return '/' }
-/\(/        { return '(' }
-/\)/        { return ')' }
-/\./        { return '.' }
-/;/         { return ';' }
-/\,/        { return ',' }
-/=/         { return '=' }
-/\</        { return '<' }
-/\>/        { return '>' }
+/\+/        { return TK_PLUS }
+/\-/        { return TK_MINUS }
+/\*/        { return TK_STAR }
+/\//        { return TK_DIV }
+/\(/        { return TK_LEFT_PAR }
+/\)/        { return TK_RIGHT_PAR }
+/\./        { return TK_DOT }
+/;/         { return TK_SEMICOLON }
+/\,/        { return TK_COMMA }
+/=/         { return TK_EQ }
+/\</        { return TK_LT }
+/\>/        { return TK_GT }
 /\>=/       { return TK_GTE }
 /\<=/       { return TK_LTE }
 /\<\>/      { return TK_NE }
