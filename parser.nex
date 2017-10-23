@@ -1,7 +1,9 @@
 /[ \t\f\r\n]/   { /* Skip white space */ }
 /--[^\n]*/      { /* Single line comment */ }
-
+/\/\*[^*]*\*\//  { /* Multi line comment */ }
+/[0-9]+\.[0-9]+/ { lval.float_t, _ = strconv.ParseFloat(yylex.Text(), 64); return FLOAT_LIT }
 /[0-9]+/    { lval.int_t, _ = strconv.Atoi(yylex.Text()); return INT_LIT }
+
 /\+/        { return '+' }
 /\-/        { return '-' }
 /\*/        { return '*' }
@@ -23,7 +25,7 @@
 /[aA][nN][dD]/                  { return KW_AND }
 /[oO][rR]/                      { return KW_OR }
 /[nN][oO][tT]/                  { return KW_NOT }
-/[dD][eE][fF][aA][uU][lT]/      { return KW_DEFAULT }
+/[dD][eE][fF][aA][uU][lL][lT]/      { return KW_DEFAULT }
 /[iI][nN][tT][eE][gG][eE][rR]/  { return KW_INTEGER }
 /[cC][hH][aA][rR]/              { return KW_CHAR }
 /[cC][rR][eE][aA][tT][eE]/      { return KW_CREATE }
@@ -53,11 +55,17 @@
 /[iI][nN]/                      { return KW_IN }
 /[iI][sS]/                      { return KW_IS }
 /[aA][sS]/                      { return KW_AS }
+/[bB][yY]/                      { return KW_BY }
+/[bB][oO][oO][lL][eE][aA][nN]/ { return KW_BOOLEAN}
+/[oO][nN]/                      { return KW_ON }
 /[aA][dD][dD]/                  { return KW_ADD }
 /[cC][oO][lL][uU][mM][nN]/      { return KW_COLUMN }
+/[gG][rR][oO][uU][pP]/          { return KW_GROUP }
+/[dD][aA][tT][eE][tT][iI][mM][eE]/  { return KW_DATETIME }
+/[fF][lL][oO][aA][tT]/          { return KW_FLOAT }
 /[aA][uU][tT][oO]_[iI][nN][cC][rR][eE][mM][eE][nN][tT]/ { return KW_AUTO_INCREMENT}
-/[a-zA-Z][a-zA-Z0-9_]*/         { return TK_ID }
-/'[^']*'/                       { lval.string_t = yylex.Text();  return STR_LIT }
+/[a-zA-Z][a-zA-Z0-9_]*/         { lval.string_t = yylex.Text(); return TK_ID }
+/'[^']*'/                       { lval.string_t =strings.Replace(yylex.Text(), "'", "", -1);  return STR_LIT }
 /./                             { 
                                     panic(&error{
                                             line: yylex.Line() + 1,
