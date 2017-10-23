@@ -8,7 +8,6 @@
 
 'Multi line
 string! Why not?'
-
 /*
     Slash star comment
 */
