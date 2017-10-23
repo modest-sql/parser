@@ -1,6 +1,6 @@
 TARGET=parser
-PARSER_SRC=y.go
-LEXER_SRC=parser.nn.go
+PARSER_SRC=parser.go
+LEXER_SRC=lexer.go
 
 .PHONY: clean
 
@@ -8,10 +8,10 @@ $(TARGET): $(PARSER_SRC) $(LEXER_SRC)
 	go build -o $(TARGET)
 
 $(PARSER_SRC): parser.y
-	goyacc $<
+	goyacc -o $@ $<
 
 $(LEXER_SRC): parser.nex
-	nex $<
+	nex -o $@ $<
 
 run: $(TARGET)
 	./$< < input.txt

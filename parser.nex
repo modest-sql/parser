@@ -12,11 +12,6 @@
 package parser
 
 import (
-    "os"
     "strconv"
     "fmt"
 )
-
-func main() {
-    yyParse(NewLexer(os.Stdin))
-}
