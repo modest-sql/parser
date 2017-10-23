@@ -2,7 +2,12 @@
 
 %{
 package parser
-import "fmt"
+
+import (
+    "fmt"
+    "io"
+)
+
 %}
 
 %union {
@@ -168,3 +173,24 @@ truth_value: KW_TRUE { }
 ;
 
 %%
+
+func (l *Lexer) Error(s string) {
+	panic(&error{
+        line: l.Line() + 1,
+        column: l.Column() + 1,
+        message: s,
+    })
+}
+
+func Parse(in io.Reader) (err *error) {
+    defer func() {
+        if r := recover(); r != nil {
+            err = r.(*error)
+        }
+    }()    
+
+    yyErrorVerbose = true
+    yyParse(NewLexer(in))
+
+    return nil
+}

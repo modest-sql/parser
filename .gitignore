@@ -2,6 +2,7 @@
 !*.nex
 !*.y
 !samples/*.sql
+!*_test.go
 !.gitignore
 !Makefile
 !LICENSE

@@ -4,14 +4,14 @@ LEXER_SRC=lexer.go
 
 .PHONY: clean
 
-$(TARGET): $(PARSER_SRC) $(LEXER_SRC)
+$(TARGET): $(PARSER_SRC) $(LEXER_SRC) error.go
 	go build -o $(TARGET)
 
 $(PARSER_SRC): parser.y
 	goyacc -o $@ $<
 
 $(LEXER_SRC): parser.nex
-	nex -o $@ $<
+	nex -e -o $@ $<
 
 run: $(TARGET)
 	./$< < input.txt
