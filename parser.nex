@@ -1,7 +1,7 @@
 /[ \t\f\r\n]/   { /* Skip white space */ }
 /--[^\n]*/      { /* Single line comment */ }
 
-/[0-9]+/    { lval.int_t, _ = strconv.Atoi(yylex.Text()); return NUM }
+/[0-9]+/    { lval.int_t, _ = strconv.Atoi(yylex.Text()); return INT_LIT }
 /\+/        { return '+' }
 /\-/        { return '-' }
 /\*/        { return '*' }
@@ -57,7 +57,7 @@
 /[cC][oO][lL][uU][mM][nN]/      { return KW_COLUMN }
 /[aA][uU][tT][oO]_[iI][nN][cC][rR][eE][mM][eE][nN][tT]/ { return KW_AUTO_INCREMENT}
 /[a-zA-Z][a-zA-Z0-9_]*/         { return TK_ID }
-/'[^']*'/                       { lval.string_t = yylex.Text();  return TK_WORD }
+/'[^']*'/                       { lval.string_t = yylex.Text();  return STR_LIT }
 /./                             { 
                                     panic(&error{
                                             line: yylex.Line() + 1,

@@ -1,4 +1,4 @@
--- Expected tokens: 62
+-- Expected tokens: 64
 
 -- Binary operators
 + - * / < > <= >= = between LIKE IS AND OR 
@@ -22,7 +22,7 @@ CREATE ALTER DROP Insert UpDAte delete
 
 INTEGER FLOAT BOOLEAN CHAR DATETIME
 
-DEFAULT AUTO_INCREMENT
+DEFAULT AUTO_INCREMENT COLUMN ADD
 
 -- Identifiers
 movies

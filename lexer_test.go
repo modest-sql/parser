@@ -5,20 +5,6 @@ import (
 	"testing"
 )
 
-//DELETE THESE CONSTANTS!!!!
-const (
-	INT_LIT     = 0
-	FLOAT_LIT   = 0
-	STR_LIT     = 0
-	KW_ON       = 0
-	KW_GROUP    = 0
-	KW_BY       = 0
-	KW_AS       = 0
-	KW_FLOAT    = 0
-	KW_BOOLEAN  = 0
-	KW_DATETIME = 0
-)
-
 func TestLexer(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -35,7 +21,7 @@ func TestLexer(t *testing.T) {
 	lval := &yySymType{}
 
 	tokenCount := 0
-	expectedTokenCount := 62
+	expectedTokenCount := 64
 
 	var integers []int
 	var floats []float64
@@ -54,7 +40,7 @@ func TestLexer(t *testing.T) {
 			strings = append(strings, lval.string_t)
 		} else if token == TK_ID {
 			identifiers = append(identifiers, lval.string_t)
-		} else if token >= KW_OR && token <= KW_FALSE {
+		} else if token >= KW_OR && token <= KW_COLUMN {
 			keywords = append(keywords, token)
 		}
 
@@ -112,8 +98,8 @@ func TestLexer(t *testing.T) {
 	})
 
 	t.Run("TestIdentifiers", func(t *testing.T) {
-		expectedIdentifierCount := 4
 		expectedIdentifiers := []string{"movies", "movies", "title", "movies2"}
+		expectedIdentifierCount := len(expectedIdentifiers)
 		identifierCount := len(identifiers)
 
 		if identifierCount != expectedIdentifierCount {
@@ -169,6 +155,8 @@ func TestLexer(t *testing.T) {
 			KW_DATETIME,
 			KW_DEFAULT,
 			KW_AUTO_INCREMENT,
+			KW_COLUMN,
+			KW_ADD,
 		}
 
 		expectedKeywordCount := len(expectedKeywords)
