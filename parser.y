@@ -18,7 +18,7 @@
 %token KW_ALTER KW_VALUES KW_BETWEEN KW_LIKE KW_INNER
 %token KW_HAVING KW_SUM KW_COUNT KW_AVG KW_MIN KW_MAX
 %token KW_NULL KW_IN  KW_IS KW_AUTO_INCREMENT KW_JOIN KW_DROP KW_DEFAULT
-%token KW_TRUE KW_FALSE
+%token KW_TRUE KW_FALSE KW_AS KW_ADD KW_COLUMN
 
 %token<int_t> NUM
 %token<string_t> TK_WORD TK_ID
@@ -78,13 +78,27 @@ constr_not_null: KW_NOT KW_NULL { }
     | KW_AUTO_INCREMENT { }
 ;
 
-alter_statement: KW_ALTER KW_TABLE { }
+alter_statement: KW_ALTER KW_TABLE TK_ID alter_instruction ';' { }
+;
+
+alter_instruction: KW_ADD TK_ID { }
+    | KW_DROP KW_COLUMN TK_ID data_type column_constraint_list { }
 ;
 
 drop_statement: KW_DROP KW_TABLE TK_ID { }
 ;
 
-select_statement: KW_SELECT  {  }
+select_statement: KW_SELECT select_col_list KW_FROM TK_ID opt_alias_spec where_clause ';' {  }
+;
+
+select_col_list: select_col_list ',' select_col { }
+    | select_col { }
+;
+
+select_col: '*' { }
+    | TK_ID opt_multipart_id_suffix opt_alias_spec { }
+    | value_literal opt_alias_spec { }
+    | truth_value opt_alias_spec
 ;
 
 insert_statement: KW_INSERT KW_INTO TK_ID '(' column_names_list ')' KW_VALUES values_tuples_list ';' { }
@@ -109,7 +123,11 @@ value_literal: TK_WORD
     | NUM
 ;
 
-delete_statement: KW_DELETE TK_ID where_clause ';' { }
+delete_statement: KW_DELETE TK_ID opt_alias_spec where_clause ';' { }
+;
+
+opt_alias_spec: KW_AS TK_ID { }
+    | { }
 ;
 
 where_clause: KW_WHERE search_condition { }
@@ -170,8 +188,12 @@ relational_factor: relational_factor '*' addi_factor { }
 addi_factor: NUM { }
     | truth_value { }
     | TK_WORD { }
-    | TK_ID { }
+    | TK_ID opt_multipart_id_suffix { }
     | '(' relational_expression ')' { }
+;
+
+opt_multipart_id_suffix: '.' TK_ID
+    | { }
 ;
 
 truth_value: KW_TRUE { }
