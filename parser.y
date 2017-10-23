@@ -127,6 +127,7 @@ delete_statement: KW_DELETE TK_ID opt_alias_spec where_clause ';' { }
 ;
 
 opt_alias_spec: KW_AS TK_ID { }
+    | TK_ID { }
     | { }
 ;
 
