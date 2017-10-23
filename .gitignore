@@ -1,7 +1,5 @@
-*
-!*.nex
-!*.y
-!samples/*.sql
-!.gitignore
-!Makefile
-!LICENSE
+.vscode/
+*.output
+parser
+parser.go
+lexer.go
