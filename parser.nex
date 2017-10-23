@@ -54,9 +54,12 @@
 /[aA][uU][tT][oO]_[iI][nN][cC][rR][eE][mM][eE][nN][tT]/ { return KW_AUTO_INCREMENT}
 /[a-zA-Z][a-zA-Z0-9_]*/         { return TK_ID }
 /'[^']*'/                       { lval.string_t = yylex.Text();  return TK_WORD }
-/./                             {
-                                    fmt.Printf("There's an unexpected token '%s' here\n", yylex.Text())
-                                    fmt.Printf("Unexpected token was found. \n")
+/./                             { 
+                                    panic(error{
+                                            line: yylex.Line(),
+                                            column: yylex.Column(),
+                                            message: fmt.Sprintf("Unexpected token '%s'", yylex.Text()),
+                                        }) 
                                 }
 //
 

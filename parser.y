@@ -168,7 +168,3 @@ truth_value: KW_TRUE { }
 ;
 
 %%
-
-func (l *Lexer) Error(s string) {
-	fmt.Printf("Syntax error at Ln %d Col %d: %s with input %s\n", l.Line(), l.Column(), s, l.Text())
-}
