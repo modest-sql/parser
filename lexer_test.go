@@ -36,7 +36,9 @@ func TestLexer(t *testing.T) {
 			integers = append(integers, lval.int_t)
 
 		} else if token == FLOAT_LIT {
+
 			floats = append(floats, lval.float_t)
+
 		} else if token == STR_LIT {
 			strings = append(strings, lval.string_t)
 

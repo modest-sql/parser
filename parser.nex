@@ -1,8 +1,10 @@
 /[ \t\f\r\n]/   { /* Skip white space */ }
 /--[^\n]*/      { /* Single line comment */ }
 /\/\*[^*]*\*\//  { /* Multi line comment */ }
-/[0-9]+\.[0-9]+/ { lval.float_t, _ = strconv.ParseFloat(yylex.Text(), 64); return FLOAT_LIT }
-/[0-9]+/    { lval.int_t, _ = strconv.Atoi(yylex.Text()); return INT_LIT }
+
+/-?[0-9]+/	        {i, _ := strconv.Atoi(yylex.Text()); lval.int_t = i; return INT_LIT; }
+/-?[0-9]+\.[0-9]*|-?\.[0-9]+|-?[0-9]+[Ee][-+]?[0-9]+|-?[0-9]+\.[0-9]*[Ee][-+]?[0-9]+|-?\.[0-9]*[Ee][-+]?[0-9]+/ { lval.float_t, _ = strconv.ParseFloat(yylex.Text(), 64);  return FLOAT_LIT;}
+
 
 /\+/        { return '+' }
 /\-/        { return '-' }
