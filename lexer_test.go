@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	"os"
 	"testing"
 )
@@ -247,8 +246,6 @@ func TestLexer(t *testing.T) {
 	})
 
 	t.Run("TestBinaryOperators", func(t *testing.T) {
-		fmt.Println(binOperators)
-
 		expectedBinOperators := []int{
 			TK_PLUS,
 			TK_MINUS,
