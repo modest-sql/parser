@@ -70,7 +70,7 @@
                                     panic(Error{
                                             line: yylex.Line() + 1,
                                             column: yylex.Column() + 1,
-                                            message: fmt.Sprintf("Syntax Error: Unexpected token '%s'", yylex.Text()),
+                                            message: fmt.Sprintf("syntax error: unexpected token '%s'", yylex.Text()),
                                         })
                                 }
 //
