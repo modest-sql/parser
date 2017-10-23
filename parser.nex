@@ -55,8 +55,8 @@
 /[a-zA-Z][a-zA-Z0-9_]*/         { return TK_ID }
 /'[^']*'/                       { lval.string_t = yylex.Text();  return TK_WORD }
 /./                             {
-                                    fmt.Printf("There's an unexpected token '%s' here\n", yylex.Text())
-                                    fmt.Printf("Unexpected token was found. \n")
+                                    template := "There's an unexpected token '%s' at Ln %d Col %d\n"
+                                    panic(fmt.Sprintf(template, yylex.Text(), yylex.Line(), yylex.Column()))
                                 }
 //
 

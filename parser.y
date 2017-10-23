@@ -109,7 +109,7 @@ value_literal: TK_WORD
     | NUM
 ;
 
-delete_statement: KW_DELETE KW_TABLE TK_ID where_clause { }
+delete_statement: KW_DELETE TK_ID where_clause ';' { }
 ;
 
 where_clause: KW_WHERE search_condition { }
@@ -118,7 +118,17 @@ where_clause: KW_WHERE search_condition { }
 search_condition: boolean_value_expression
 ;
 
-update_statement: KW_UPDATE { }
+update_statement: KW_UPDATE TK_ID set_list where_clause ';' { }
+;
+
+set_list: KW_SET set_assignments_list { }
+;
+
+set_assignments_list: set_assignments_list ',' set_assignment { }
+    | set_assignment { }
+;
+
+set_assignment: TK_ID '=' relational_term { }
 ;
 
 boolean_value_expression: boolean_value_expression KW_OR boolean_term { }
@@ -135,6 +145,7 @@ boolean_factor: KW_NOT relational_expression { }
 
 relational_expression: relational_expression '<' relational_term { }
     | relational_expression '>' relational_term { }
+    | relational_expression '=' relational_term { }
     | relational_expression TK_LTE relational_term { }
     | relational_expression TK_GTE relational_term { }
     | relational_expression TK_NE relational_term { }
@@ -158,6 +169,7 @@ relational_factor: relational_factor '*' addi_factor { }
 
 addi_factor: NUM { }
     | truth_value { }
+    | TK_WORD { }
     | TK_ID { }
     | '(' relational_expression ')' { }
 ;
@@ -170,5 +182,5 @@ truth_value: KW_TRUE { }
 %%
 
 func (l *Lexer) Error(s string) {
-	fmt.Printf("Syntax error at Ln %d Col %d: %s with input %s\n", l.Line(), l.Column(), s, l.Text())
+	fmt.Printf("Error found at Ln %d Col %d: %s with input %s\n", l.Line(), l.Column(), s, l.Text())
 }
