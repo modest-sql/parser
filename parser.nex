@@ -1,4 +1,5 @@
-/[ \t\n]/   { /* Skip white space */ }
+/[ \t\f\r\n]/   { /* Skip white space */ }
+
 /[0-9]+/    { lval.int_t, _ = strconv.Atoi(yylex.Text()); return NUM }
 /\+/        { return '+' }
 /\-/        { return '-' }
@@ -6,7 +7,57 @@
 /\//        { return '/' }
 /\(/        { return '(' }
 /\)/        { return ')' }
-/./         { panic(fmt.Sprintf("Unexpected token '%s'", yylex.Text())) }
+/\./        { return '.' }
+/;/         { return ';' }
+/\,/        { return ',' }
+/=/         { return '=' }
+/\</        { return '<' }
+/\>/        { return '>' }
+/\>=/       { return TK_GTE }
+/\<=/       { return TK_LTE }
+/\<\>/      { return TK_NE }
+
+/[lL][iI][kK][eE]/              { return KW_LIKE }
+/[bB][eE][tT][wW][eE][eE][nN]/  { return KW_BETWEEN }
+/[aA][nN][dD]/                  { return KW_AND }
+/[oO][rR]/                      { return KW_OR }
+/[nN][oO][tT]/                  { return KW_NOT }
+/[dD][eE][fF][aA][uU][lT]/      { return KW_DEFAULT }
+/[iI][nN][tT][eE][gG][eE][rR]/  { return KW_INTEGER }
+/[cC][hH][aA][rR]/              { return KW_CHAR }
+/[cC][rR][eE][aA][tT][eE]/      { return KW_CREATE }
+/[tT][aA][bB][lL][eE]/          { return KW_TABLE }
+/[dD][eE][lL][eE][tT][eE]/      { return KW_DELETE }
+/[iI][nN][sS][eE][rR][tT]/      { return KW_INSERT }
+/[iI][nN][tT][oO]/              { return KW_INTO }
+/[vV][aA][lL][uU][eE][sS]/      { return KW_VALUES }
+/[sS][eE][lL][eE][cC][tT]/      { return KW_SELECT }
+/[uU][pP][dD][aA][tT][eE]/      { return KW_UPDATE }
+/[wW][hH][eE][rR][eE]/          { return KW_WHERE }
+/[tT][rR][uU][eE]/              { return KW_TRUE }
+/[fF][aA][lL][sS][eE]/          { return KW_FALSE }
+/[fF][rR][oO][mM]/              { return KW_FROM }
+/[sS][eE][tT]/                  { return KW_SET }
+/[dD][rR][oO][pP]/              { return KW_DROP }
+/[iI][nN][nN][eE][rR]/          { return KW_INNER }
+/[jJ][oO][iI][nN]/              { return KW_JOIN   }
+/[hH][aA][vV][iI][nN][gG]/      { return KW_HAVING }
+/[sS][uU][mM]/                  { return KW_SUM }
+/[cC][oO][uU][nN][tT]/          { return KW_COUNT }
+/[aA][vV][gG]/                  { return KW_AVG }
+/[mM][iI][nN]/                  { return KW_MIN }
+/[mM][aA][xX]/                  { return KW_MAX }
+/[aA][lL][tT][eE][rR]/          { return KW_ALTER }
+/[nN][uU][lL][lL]/              { return KW_NULL }
+/[iI][nN]/                      { return KW_IN }
+/[iI][sS]/                      { return KW_IS }
+/[aA][uU][tT][oO]_[iI][nN][cC][rR][eE][mM][eE][nN][tT]/ { return KW_AUTO_INCREMENT}
+/[a-zA-Z][a-zA-Z0-9_]*/         { return TK_ID }
+/'[^']*'/                       { lval.string_t = yylex.Text();  return TK_WORD }
+/./                             {
+                                    fmt.Printf("There's an unexpected token '%s' here\n", yylex.Text())
+                                    fmt.Printf("Unexpected token was found. \n")
+                                }
 //
 
 package parser

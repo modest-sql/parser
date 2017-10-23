@@ -1,3 +1,5 @@
+/* Based on https://ronsavage.github.io/SQL/sql-2003-2.bnf.html */
+
 %{
 package parser
 import "fmt"
@@ -5,30 +7,168 @@ import "fmt"
 
 %union {
     int_t int
+    string_t string
 }
 
-%type<int_t> expression term factor
-
-%token '+' '-' '*' '/' '(' ')'
+%token '+' '-' '*' '/' '(' ')' ',' '.' ';' '=' '<' '>'
+%token TK_GTE TK_LTE TK_NE
+%token KW_OR KW_AND KW_NOT KW_INTEGER KW_CHAR 
+%token KW_CREATE KW_TABLE KW_DELETE KW_INSERT
+%token KW_INTO KW_SELECT KW_WHERE KW_FROM KW_UPDATE KW_SET TK_WORD
+%token KW_ALTER KW_VALUES KW_BETWEEN KW_LIKE KW_INNER
+%token KW_HAVING KW_SUM KW_COUNT KW_AVG KW_MIN KW_MAX
+%token KW_NULL KW_IN  KW_IS KW_AUTO_INCREMENT KW_JOIN KW_DROP KW_DEFAULT
+%token KW_TRUE KW_FALSE
 
 %token<int_t> NUM
+%token<string_t> TK_WORD TK_ID
 
 %%
 
-input: expression { fmt.Printf("Result: %d\n", $1); }
-    | /* empty */
+input: statements_list {  }
+    | { }
 ;
 
-expression: expression '+' term { $$ = $1 + $3; }
-    | expression '-' term { $$ = $1 - $3; }
-    | term
+statements_list: statements_list statement { fmt.Println("Hey there, I'm a statements_list!\n"); }
+    | statement { }
 ;
 
-term: term '*' factor { $$ = $1 * $3; }
-    | term '/' factor { $$ = $1 / $3; }
-    | factor
+statement: data_statement { fmt.Printf("Data access statement found\n"); }
+    | schema_statement { fmt.Printf("Schema Definition/Manipulation statement found\n"); }
 ;
 
-factor: NUM
-    | '(' expression ')' { $$ = $2; }
+schema_statement: create_statement {  }
+    | alter_statement { }
+    | drop_statement { }
 ;
+
+data_statement: select_statement { }
+    | insert_statement { }
+    | delete_statement { }
+    | update_statement { }
+;
+
+create_statement: KW_CREATE KW_TABLE TK_ID '(' table_element_list ')' ';'  {  }
+;
+
+table_element_list: table_element_list ',' table_element {  }
+    | table_element {  }
+;
+
+table_element: column_definition {  }
+;
+
+column_definition: TK_ID data_type column_constraint_list {  }
+;
+
+data_type: KW_CHAR '(' NUM ')' { }
+    | KW_INTEGER { }
+;
+
+column_constraint_list: column_constraint_list column_constraint { }
+    | column_constraint { }
+    | { }
+;
+
+column_constraint: constr_not_null { }
+;
+
+constr_not_null: KW_NOT KW_NULL { }
+    | KW_DEFAULT value_literal { }
+    | KW_AUTO_INCREMENT { }
+;
+
+alter_statement: KW_ALTER KW_TABLE { }
+;
+
+drop_statement: KW_DROP KW_TABLE TK_ID { }
+;
+
+select_statement: KW_SELECT  {  }
+;
+
+insert_statement: KW_INSERT KW_INTO TK_ID '(' column_names_list ')' KW_VALUES values_tuples_list ';' { }
+;
+
+column_names_list: column_names_list ',' TK_ID { }
+    | TK_ID { }
+;
+
+values_tuples_list: values_tuples_list ',' values_tuple { }
+    | values_tuple { }
+;
+
+values_tuple: '(' values_list ')'
+;
+
+values_list: values_list ',' value_literal
+    | value_literal
+;
+
+value_literal: TK_WORD
+    | NUM
+;
+
+delete_statement: KW_DELETE KW_TABLE TK_ID where_clause { }
+;
+
+where_clause: KW_WHERE search_condition { }
+;
+
+search_condition: boolean_value_expression
+;
+
+update_statement: KW_UPDATE { }
+;
+
+boolean_value_expression: boolean_value_expression KW_OR boolean_term { }
+    | boolean_term { }
+;
+
+boolean_term: boolean_term KW_AND boolean_factor { }
+    | boolean_factor { }
+;
+
+boolean_factor: KW_NOT relational_expression { }
+    | relational_expression { }
+;
+
+relational_expression: relational_expression '<' relational_term { }
+    | relational_expression '>' relational_term { }
+    | relational_expression TK_LTE relational_term { }
+    | relational_expression TK_GTE relational_term { }
+    | relational_expression TK_NE relational_term { }
+    | relational_expression KW_LIKE relational_term { }
+    | relational_expression KW_BETWEEN between_term { }
+    | relational_term { }
+;
+
+between_term: NUM KW_AND NUM { }
+;
+
+relational_term: relational_term '+' relational_factor { }
+    | relational_term '-' relational_factor { }
+    | relational_factor { }
+;
+
+relational_factor: relational_factor '*' addi_factor { }
+    | relational_factor '/' addi_factor { }
+    | addi_factor { }
+;
+
+addi_factor: NUM { }
+    | truth_value { }
+    | TK_ID { }
+    | '(' relational_expression ')' { }
+;
+
+truth_value: KW_TRUE { }
+    | KW_FALSE { }
+    | KW_NULL
+;
+
+%%
+
+func (l *Lexer) Error(s string) {
+	fmt.Printf("Syntax error at Ln %d Col %d: %s with input %s\n", l.Line(), l.Column(), s, l.Text())
+}
