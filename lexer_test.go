@@ -5,19 +5,6 @@ import (
 	"testing"
 )
 
-//DELETE THESE CONSTANTS!!!!
-const (
-	INT_LIT     = 0
-	FLOAT_LIT   = 0
-	STR_LIT     = 0
-	KW_ON       = 0
-	KW_GROUP    = 0
-	KW_BY       = 0
-	KW_FLOAT    = 0
-	KW_BOOLEAN  = 0
-	KW_DATETIME = 0
-)
-
 func TestLexer(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {

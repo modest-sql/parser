@@ -18,16 +18,17 @@ import (
 
 %token '+' '-' '*' '/' '(' ')' ',' '.' ';' '=' '<' '>'
 %token TK_GTE TK_LTE TK_NE
-%token KW_OR KW_AND KW_NOT KW_INTEGER KW_CHAR 
+%token KW_OR KW_AND KW_NOT KW_INTEGER KW_FLOAT KW_CHAR KW_BOOLEAN KW_DATETIME
 %token KW_CREATE KW_TABLE KW_DELETE KW_INSERT
-%token KW_INTO KW_SELECT KW_WHERE KW_FROM KW_UPDATE KW_SET TK_WORD
+%token KW_INTO KW_SELECT KW_WHERE KW_FROM KW_UPDATE KW_SET
 %token KW_ALTER KW_VALUES KW_BETWEEN KW_LIKE KW_INNER
 %token KW_HAVING KW_SUM KW_COUNT KW_AVG KW_MIN KW_MAX
-%token KW_NULL KW_IN KW_IS KW_AUTO_INCREMENT KW_JOIN KW_DROP KW_DEFAULT
+%token KW_NULL KW_IN KW_IS KW_AUTO_INCREMENT KW_JOIN KW_ON KW_GROUP KW_BY KW_DROP KW_DEFAULT
 %token KW_TRUE KW_FALSE KW_AS KW_ADD KW_COLUMN
 
-%token<int_t> NUM
-%token<string_t> TK_WORD TK_ID
+%token<int_t> INT_LIT
+%token<float_t> FLOAT_LIT
+%token<string_t> TK_ID STR_LIT
 
 %%
 
@@ -67,7 +68,7 @@ table_element: column_definition {  }
 column_definition: TK_ID data_type column_constraint_list {  }
 ;
 
-data_type: KW_CHAR '(' NUM ')' { }
+data_type: KW_CHAR '(' INT_LIT ')' { }
     | KW_INTEGER { }
 ;
 
@@ -125,8 +126,8 @@ values_list: values_list ',' value_literal
     | value_literal
 ;
 
-value_literal: TK_WORD
-    | NUM
+value_literal: STR_LIT
+    | INT_LIT
 ;
 
 delete_statement: KW_DELETE TK_ID opt_alias_spec where_clause ';' { }
@@ -179,7 +180,7 @@ relational_expression: relational_expression '<' relational_term { }
     | relational_term { }
 ;
 
-between_term: NUM KW_AND NUM { }
+between_term: INT_LIT KW_AND INT_LIT { }
 ;
 
 relational_term: relational_term '+' relational_factor { }
@@ -192,9 +193,9 @@ relational_factor: relational_factor '*' addi_factor { }
     | addi_factor { }
 ;
 
-addi_factor: NUM { }
+addi_factor: INT_LIT { }
     | truth_value { }
-    | TK_WORD { }
+    | STR_LIT { }
     | TK_ID opt_multipart_id_suffix { }
     | '(' relational_expression ')' { }
 ;
