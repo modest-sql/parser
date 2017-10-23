@@ -4,7 +4,7 @@ LEXER_SRC=lexer.go
 
 .PHONY: clean
 
-$(TARGET): $(PARSER_SRC) $(LEXER_SRC) ast.go error.go
+$(TARGET): $(PARSER_SRC) $(LEXER_SRC) ast.go parser_error.go
 	go build -o $(TARGET)
 
 $(PARSER_SRC): parser.y

@@ -218,17 +218,17 @@ func init() {
 }
 
 func (l *Lexer) Error(s string) {
-	panic(&error{
+	panic(parserError{
         line: l.Line() + 1,
         column: l.Column() + 1,
         message: s,
     })
 }
 
-func Parse(in io.Reader) (err *error) {
+func Parse(in io.Reader) (err error) {
     defer func() {
         if r := recover(); r != nil {
-            err = r.(*error)
+            err = r.(error)
         }
     }()    
 
