@@ -57,20 +57,18 @@
 /[aA][uU][tT][oO]_[iI][nN][cC][rR][eE][mM][eE][nN][tT]/ { return KW_AUTO_INCREMENT}
 /[a-zA-Z][a-zA-Z0-9_]*/         { return TK_ID }
 /'[^']*'/                       { lval.string_t = yylex.Text();  return TK_WORD }
-/./                             {
-                                    template := "There's an unexpected token '%s' at Ln %d Col %d\n"
-                                    panic(fmt.Sprintf(template, yylex.Text(), yylex.Line(), yylex.Column()))
+/./                             { 
+                                    panic(&error{
+                                            line: yylex.Line() + 1,
+                                            column: yylex.Column() + 1,
+                                            message: fmt.Sprintf("Syntax Error: Unexpected token '%s'", yylex.Text()),
+                                        })
                                 }
 //
 
-package main
+package parser
 
 import (
-    "os"
     "strconv"
     "fmt"
 )
-
-func main() {
-    yyParse(NewLexer(os.Stdin))
-}

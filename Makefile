@@ -1,17 +1,17 @@
-TARGET=parser.exe
-PARSER_SRC=y.go
-LEXER_SRC=parser.nn.go
+TARGET=parser
+PARSER_SRC=parser.go
+LEXER_SRC=lexer.go
 
 .PHONY: clean
 
-$(TARGET): $(PARSER_SRC) $(LEXER_SRC)
-	go build
+$(TARGET): $(PARSER_SRC) $(LEXER_SRC) error.go
+	go build -o $(TARGET)
 
 $(PARSER_SRC): parser.y
-	goyacc $<
+	goyacc -o $@ $<
 
 $(LEXER_SRC): parser.nex
-	nex -e $<
+	nex -e -o $@ $<
 
 run: $(TARGET)
 	./$< < input.txt

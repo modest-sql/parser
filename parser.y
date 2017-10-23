@@ -1,8 +1,13 @@
 /* Based on https://ronsavage.github.io/SQL/sql-2003-2.bnf.html */
 
 %{
-    package main
-    import "fmt"
+package parser
+
+import (
+    "fmt"
+    "io"
+)
+
 %}
 
 %union {
@@ -205,5 +210,22 @@ truth_value: KW_TRUE { }
 %%
 
 func (l *Lexer) Error(s string) {
-	fmt.Printf("Error found at Ln %d Col %d: %s with input %s\n", l.Line(), l.Column(), s, l.Text())
+	panic(&error{
+        line: l.Line() + 1,
+        column: l.Column() + 1,
+        message: s,
+    })
+}
+
+func Parse(in io.Reader) (err *error) {
+    defer func() {
+        if r := recover(); r != nil {
+            err = r.(*error)
+        }
+    }()    
+
+    yyErrorVerbose = true
+    yyParse(NewLexer(in))
+
+    return nil
 }
