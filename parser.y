@@ -213,6 +213,10 @@ truth_value: KW_TRUE { }
 
 %%
 
+func init() {
+    yyErrorVerbose = true
+}
+
 func (l *Lexer) Error(s string) {
 	panic(&error{
         line: l.Line() + 1,
@@ -228,7 +232,6 @@ func Parse(in io.Reader) (err *error) {
         }
     }()    
 
-    yyErrorVerbose = true
     yyParse(NewLexer(in))
 
     return nil
