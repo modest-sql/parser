@@ -170,7 +170,7 @@ func TestLexer(t *testing.T) {
 	})
 
 	t.Run("TestIdentifiers", func(t *testing.T) {
-		expectedIdentifiers := []string{"movies", "MOVIES", "title", "movies2"}
+		expectedIdentifiers := []string{"movies", "movies", "title", "movies2"}
 		expectedIdentifierCount := len(expectedIdentifiers)
 		identifierCount := len(identifiers)
 

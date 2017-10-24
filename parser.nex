@@ -64,8 +64,8 @@
 /[dD][aA][tT][eE][tT][iI][mM][eE]/  { return KW_DATETIME }
 /[fF][lL][oO][aA][tT]/          { return KW_FLOAT }
 /[aA][uU][tT][oO]_[iI][nN][cC][rR][eE][mM][eE][nN][tT]/ { return KW_AUTO_INCREMENT}
-/[a-zA-Z][a-zA-Z0-9_]*/         { lval.string_t = yylex.Text(); return TK_ID }
-/'[^']*'/                       { lval.string_t =strings.Replace(yylex.Text(), "'", "", -1);  return STR_LIT }
+/[a-zA-Z][a-zA-Z0-9_]*/         { lval.string_t = strings.ToLower(yylex.Text()); return TK_ID }
+/'[^']*'/                       { lval.string_t = strings.Replace(yylex.Text(), "'", "", -1);  return STR_LIT }
 /./                             { 
                                     panic(Error{
                                             line: yylex.Line() + 1,
@@ -78,6 +78,6 @@
 package parser
 
 import (
-    "strconv"
     "fmt"
+    "strconv"
 )
