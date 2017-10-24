@@ -34,13 +34,18 @@ func TestLexer(t *testing.T) {
 
 		if token == INT_LIT {
 			integers = append(integers, lval.int_t)
+
 		} else if token == FLOAT_LIT {
+
 			floats = append(floats, lval.float_t)
+
 		} else if token == STR_LIT {
 			strings = append(strings, lval.string_t)
+
 		} else if token == TK_ID {
 			identifiers = append(identifiers, lval.string_t)
 		} else if token >= KW_OR && token <= KW_COLUMN {
+
 			keywords = append(keywords, token)
 		}
 
@@ -92,13 +97,13 @@ func TestLexer(t *testing.T) {
 			t.Errorf("Expected `%s', got `%s'", expectedFirstValue, strings[0])
 		}
 
-		if strings[0] != expectedSecondValue {
+		if strings[1] != expectedSecondValue {
 			t.Errorf("Expected `%s', got `%s'", expectedSecondValue, strings[1])
 		}
 	})
 
 	t.Run("TestIdentifiers", func(t *testing.T) {
-		expectedIdentifiers := []string{"movies", "movies", "title", "movies2"}
+		expectedIdentifiers := []string{"movies", "MOVIES", "title", "movies2"}
 		expectedIdentifierCount := len(expectedIdentifiers)
 		identifierCount := len(identifiers)
 
