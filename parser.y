@@ -3,10 +3,7 @@
 %{
 package parser
 
-import (
-    "fmt"
-    "io"
-)
+import "io"
 
 %}
 
@@ -38,12 +35,12 @@ input: statements_list {  }
     | { }
 ;
 
-statements_list: statements_list statement { fmt.Println("Hey there, I'm a statements_list!\n"); }
+statements_list: statements_list statement { }
     | statement { }
 ;
 
-statement: data_statement { fmt.Printf("Data access statement found\n"); }
-    | schema_statement { fmt.Printf("Schema Definition/Manipulation statement found\n"); }
+statement: data_statement { }
+    | schema_statement { }
 ;
 
 schema_statement: create_statement {  }
