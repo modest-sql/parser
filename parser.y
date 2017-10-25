@@ -95,7 +95,8 @@ alter_instruction: KW_ADD TK_ID { }
 drop_statement: KW_DROP KW_TABLE TK_ID { }
 ;
 
-select_statement: KW_SELECT select_col_list KW_FROM TK_ID opt_alias_spec where_clause {  }
+select_statement: KW_SELECT select_col_list KW_FROM TK_ID alias_spec where_clause {  }
+    | KW_SELECT select_col_list KW_FROM TK_ID where_clause {  }
 ;
 
 select_col_list: select_col_list TK_COMMA select_col { }
@@ -103,9 +104,10 @@ select_col_list: select_col_list TK_COMMA select_col { }
 ;
 
 select_col: TK_STAR { }
-    | TK_ID opt_multipart_id_suffix opt_alias_spec { }
-    | value_literal opt_alias_spec { }
-    | truth_value opt_alias_spec
+    | TK_ID alias_spec { }
+    | TK_ID { }
+    | TK_ID multipart_id_suffix alias_spec { }
+    | TK_ID multipart_id_suffix { }
 ;
 
 insert_statement: KW_INSERT KW_INTO TK_ID TK_LEFT_PAR column_names_list TK_RIGHT_PAR KW_VALUES values_tuples_list { }
@@ -130,12 +132,12 @@ value_literal: STR_LIT
     | INT_LIT
 ;
 
-delete_statement: KW_DELETE TK_ID opt_alias_spec where_clause { }
+delete_statement: KW_DELETE TK_ID alias_spec where_clause { }
+    | KW_DELETE TK_ID where_clause { }
 ;
 
-opt_alias_spec: KW_AS TK_ID { }
+alias_spec: KW_AS TK_ID { }
     | TK_ID { }
-    | { }
 ;
 
 where_clause: KW_WHERE search_condition { }
@@ -196,12 +198,12 @@ relational_factor: relational_factor TK_STAR addi_factor { }
 addi_factor: INT_LIT { }
     | truth_value { }
     | STR_LIT { }
-    | TK_ID opt_multipart_id_suffix { }
+    | TK_ID { }
+    | TK_ID multipart_id_suffix { }
     | TK_LEFT_PAR relational_expression TK_RIGHT_PAR { }
 ;
 
-opt_multipart_id_suffix: TK_DOT TK_ID
-    | { }
+multipart_id_suffix: TK_DOT TK_ID { }
 ;
 
 truth_value: KW_TRUE { }

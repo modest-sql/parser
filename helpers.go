@@ -15,5 +15,8 @@ type columnDefinition struct {
 type whereClause struct {
 }
 
-type selectColumn interface {
+type starSelectColumn struct {
+}
+
+type identifierSelectColumn struct {
 }
