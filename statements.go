@@ -13,8 +13,27 @@ type dropStatement struct {
 	identifier string
 }
 
+type insertStatement struct {
+	table       string
+	columnNames []string
+	values      []interface{}
+}
+
+type updateStatement struct {
+	table           string
+	assignments     []assignment
+	whereExpression expression
+}
+
+type deleteStatement struct {
+	table           string
+	alias           string
+	whereExpression expression
+}
+
 type selectStatement struct {
-	identifier string
-	alias      string
-	whereClause
+	table           string
+	alias           string
+	selectColumns   []interface{}
+	whereExpression expression
 }

@@ -12,11 +12,17 @@ type columnDefinition struct {
 	defaultValue      interface{}
 	dataType
 }
-type whereClause struct {
-}
 
 type starSelectColumn struct {
 }
 
-type identifierSelectColumn struct {
+type selectColumn struct {
+	identifier string
+	alias      string
+	source     string
+}
+
+type assignment struct {
+	identifier string
+	value      interface{}
 }
