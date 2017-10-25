@@ -11,8 +11,13 @@ import "io"
     int_t int
     string_t string
     float_t float64
+
     expr_t expression
+
+    stmt_list_t statementList
     stmt_t statement
+
+    obj_t interface{}
 }
 
 %token TK_PLUS TK_MINUS TK_STAR TK_DIV TK_LT TK_GT TK_GTE TK_LTE TK_EQ TK_NE
@@ -29,15 +34,19 @@ import "io"
 %token<float_t> FLOAT_LIT
 %token<string_t> TK_ID STR_LIT
 
+%type<stmt_list_t> statements_list
+%type<stmt_t> statement data_statement schema_statement create_statement alter_statement drop_statement
+%type<stmt_t> select_statement insert_statement delete_statement update_statement
+
 %%
 
-input: statements_list {  }
+input: statements_list { $1.execute() }
     | { }
 ;
 
-statements_list: statements_list statement TK_SEMICOLON { }
-    | statement TK_SEMICOLON { }
-    | statement { }
+statements_list: statements_list statement TK_SEMICOLON { $$ = $1; $$ = append($$, $2) }
+    | statement TK_SEMICOLON { $$ = append($$, $1) }
+    | statement { $$ = append($$, $1) }
 ;
 
 statement: data_statement { }
@@ -55,7 +64,7 @@ data_statement: select_statement { }
     | update_statement { }
 ;
 
-create_statement: KW_CREATE KW_TABLE TK_ID TK_LEFT_PAR table_element_list TK_RIGHT_PAR {  }
+create_statement: KW_CREATE KW_TABLE TK_ID TK_LEFT_PAR table_element_list TK_RIGHT_PAR { $$ = &createStatement{} }
 ;
 
 table_element_list: table_element_list TK_COMMA table_element {  }
@@ -92,11 +101,11 @@ alter_instruction: KW_ADD TK_ID { }
     | KW_DROP KW_COLUMN TK_ID data_type column_constraint_list { }
 ;
 
-drop_statement: KW_DROP KW_TABLE TK_ID { }
+drop_statement: KW_DROP KW_TABLE TK_ID { $$ = &dropStatement{} }
 ;
 
-select_statement: KW_SELECT select_col_list KW_FROM TK_ID alias_spec where_clause {  }
-    | KW_SELECT select_col_list KW_FROM TK_ID where_clause {  }
+select_statement: KW_SELECT select_col_list KW_FROM TK_ID alias_spec where_clause { $$ = &selectStatement{} }
+    | KW_SELECT select_col_list KW_FROM TK_ID where_clause { $$ = &selectStatement{} }
 ;
 
 select_col_list: select_col_list TK_COMMA select_col { }
@@ -110,7 +119,7 @@ select_col: TK_STAR { }
     | TK_ID multipart_id_suffix { }
 ;
 
-insert_statement: KW_INSERT KW_INTO TK_ID TK_LEFT_PAR column_names_list TK_RIGHT_PAR KW_VALUES values_tuples_list { }
+insert_statement: KW_INSERT KW_INTO TK_ID TK_LEFT_PAR column_names_list TK_RIGHT_PAR KW_VALUES values_tuples_list { $$ = &insertStatement{} }
 ;
 
 column_names_list: column_names_list TK_COMMA TK_ID { }
@@ -132,8 +141,8 @@ value_literal: STR_LIT
     | INT_LIT
 ;
 
-delete_statement: KW_DELETE TK_ID alias_spec where_clause { }
-    | KW_DELETE TK_ID where_clause { }
+delete_statement: KW_DELETE TK_ID alias_spec where_clause { $$ = &deleteStatement{} }
+    | KW_DELETE TK_ID where_clause { $$ = &deleteStatement{} }
 ;
 
 alias_spec: KW_AS TK_ID { }
@@ -146,7 +155,7 @@ where_clause: KW_WHERE search_condition { }
 search_condition: boolean_value_expression
 ;
 
-update_statement: KW_UPDATE TK_ID set_list where_clause { }
+update_statement: KW_UPDATE TK_ID set_list where_clause { $$ = &updateStatement{} }
 ;
 
 set_list: KW_SET set_assignments_list { }
