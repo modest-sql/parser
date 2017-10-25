@@ -35,7 +35,8 @@ input: statements_list {  }
     | { }
 ;
 
-statements_list: statements_list statement { }
+statements_list: statements_list statement TK_SEMICOLON { }
+    | statement TK_SEMICOLON { }
     | statement { }
 ;
 
@@ -54,7 +55,7 @@ data_statement: select_statement { }
     | update_statement { }
 ;
 
-create_statement: KW_CREATE KW_TABLE TK_ID TK_LEFT_PAR table_element_list TK_RIGHT_PAR TK_SEMICOLON  {  }
+create_statement: KW_CREATE KW_TABLE TK_ID TK_LEFT_PAR table_element_list TK_RIGHT_PAR {  }
 ;
 
 table_element_list: table_element_list TK_COMMA table_element {  }
@@ -84,7 +85,7 @@ constr_not_null: KW_NOT KW_NULL { }
     | KW_AUTO_INCREMENT { }
 ;
 
-alter_statement: KW_ALTER KW_TABLE TK_ID alter_instruction TK_SEMICOLON { }
+alter_statement: KW_ALTER KW_TABLE TK_ID alter_instruction { }
 ;
 
 alter_instruction: KW_ADD TK_ID { }
@@ -94,7 +95,7 @@ alter_instruction: KW_ADD TK_ID { }
 drop_statement: KW_DROP KW_TABLE TK_ID { }
 ;
 
-select_statement: KW_SELECT select_col_list KW_FROM TK_ID opt_alias_spec where_clause TK_SEMICOLON {  }
+select_statement: KW_SELECT select_col_list KW_FROM TK_ID opt_alias_spec where_clause {  }
 ;
 
 select_col_list: select_col_list TK_COMMA select_col { }
@@ -107,7 +108,7 @@ select_col: TK_STAR { }
     | truth_value opt_alias_spec
 ;
 
-insert_statement: KW_INSERT KW_INTO TK_ID TK_LEFT_PAR column_names_list TK_RIGHT_PAR KW_VALUES values_tuples_list TK_SEMICOLON { }
+insert_statement: KW_INSERT KW_INTO TK_ID TK_LEFT_PAR column_names_list TK_RIGHT_PAR KW_VALUES values_tuples_list { }
 ;
 
 column_names_list: column_names_list TK_COMMA TK_ID { }
@@ -129,7 +130,7 @@ value_literal: STR_LIT
     | INT_LIT
 ;
 
-delete_statement: KW_DELETE TK_ID opt_alias_spec where_clause TK_SEMICOLON { }
+delete_statement: KW_DELETE TK_ID opt_alias_spec where_clause { }
 ;
 
 opt_alias_spec: KW_AS TK_ID { }
@@ -143,7 +144,7 @@ where_clause: KW_WHERE search_condition { }
 search_condition: boolean_value_expression
 ;
 
-update_statement: KW_UPDATE TK_ID set_list where_clause TK_SEMICOLON { }
+update_statement: KW_UPDATE TK_ID set_list where_clause { }
 ;
 
 set_list: KW_SET set_assignments_list { }
