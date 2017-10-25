@@ -4,6 +4,14 @@ type expression interface {
 	evaluate() (interface{}, error)
 }
 
+type idExpression struct {
+	name string
+}
+
+func (e *idExpression) evaluate() (interface{}, error) {
+	return &idExpression{}, nil
+}
+
 type intExpression struct {
 	value int
 }
