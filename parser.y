@@ -65,6 +65,7 @@ table_element: column_definition {  }
 ;
 
 column_definition: TK_ID data_type column_constraint_list {  }
+    | TK_ID data_type { }
 ;
 
 data_type: KW_CHAR TK_LEFT_PAR INT_LIT TK_RIGHT_PAR { }
@@ -73,7 +74,6 @@ data_type: KW_CHAR TK_LEFT_PAR INT_LIT TK_RIGHT_PAR { }
 
 column_constraint_list: column_constraint_list column_constraint { }
     | column_constraint { }
-    | { }
 ;
 
 column_constraint: constr_not_null { }
