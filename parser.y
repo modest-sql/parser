@@ -104,8 +104,8 @@ alter_instruction: KW_ADD TK_ID { }
 drop_statement: KW_DROP KW_TABLE TK_ID { $$ = &dropStatement{} }
 ;
 
-select_statement: KW_SELECT select_col_list KW_FROM TK_ID alias_spec where_clause { $$ = &selectStatement{} }
-    | KW_SELECT select_col_list KW_FROM TK_ID where_clause { $$ = &selectStatement{} }
+select_statement: KW_SELECT select_col_list KW_FROM TK_ID alias_spec opt_where_clause { $$ = &selectStatement{} }
+    | KW_SELECT select_col_list KW_FROM TK_ID opt_where_clause { $$ = &selectStatement{} }
 ;
 
 select_col_list: select_col_list TK_COMMA select_col { }
@@ -141,21 +141,22 @@ value_literal: STR_LIT
     | INT_LIT
 ;
 
-delete_statement: KW_DELETE TK_ID alias_spec where_clause { $$ = &deleteStatement{} }
-    | KW_DELETE TK_ID where_clause { $$ = &deleteStatement{} }
+delete_statement: KW_DELETE TK_ID alias_spec opt_where_clause { $$ = &deleteStatement{} }
+    | KW_DELETE TK_ID opt_where_clause { $$ = &deleteStatement{} }
 ;
 
 alias_spec: KW_AS TK_ID { }
     | TK_ID { }
 ;
 
-where_clause: KW_WHERE search_condition { }
+opt_where_clause: KW_WHERE search_condition { }
+    | { }
 ;
 
 search_condition: boolean_value_expression
 ;
 
-update_statement: KW_UPDATE TK_ID set_list where_clause { $$ = &updateStatement{} }
+update_statement: KW_UPDATE TK_ID set_list opt_where_clause { $$ = &updateStatement{} }
 ;
 
 set_list: KW_SET set_assignments_list { }
