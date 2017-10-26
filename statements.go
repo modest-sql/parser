@@ -20,11 +20,12 @@ func (sl statementList) execute() error {
 
 type createStatement struct {
 	identifier        string
-	columnDefinitions []columnDefinition
+	columnDefinitions columnDefinitions
 }
 
 func (s *createStatement) execute() error {
 	fmt.Println("TO DO: Create statement execution")
+	fmt.Printf("%+v\n", *(s.columnDefinitions[0]))
 	return nil
 }
 

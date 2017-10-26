@@ -5,12 +5,22 @@ type node interface {
 	column() int
 }
 
+type notNullConstraint struct {
+}
+
+type autoincrementConstraint struct {
+}
+
+type defaultConstraint struct {
+	value interface{}
+}
+
+type columnDefinitions []*columnDefinition
+
 type columnDefinition struct {
 	identifier        string
-	nullable          bool
-	autoincrementable bool
-	defaultValue      interface{}
-	dataType
+	dataType          dataType
+	columnConstraints []interface{}
 }
 
 type starSelectColumn struct {

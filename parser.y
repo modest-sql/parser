@@ -17,6 +17,12 @@ import "io"
     stmt_list_t statementList
     stmt_t statement
 
+    col_list_t columnDefinitions
+    col_t *columnDefinition
+
+    data_t dataType
+
+    obj_list_t []interface{}
     obj_t interface{}
 }
 
@@ -37,6 +43,16 @@ import "io"
 %type<stmt_list_t> statements_list
 %type<stmt_t> statement data_statement schema_statement create_statement alter_statement drop_statement
 %type<stmt_t> select_statement insert_statement delete_statement update_statement
+
+%type<col_list_t> table_element_list
+%type<col_t> table_element column_definition
+
+%type<obj_list_t> column_constraint_list
+%type<obj_t> column_constraint constr_not_null
+
+%type<data_t> data_type
+
+%type<obj_t> value_literal
 
 %%
 
@@ -64,34 +80,34 @@ data_statement: select_statement { }
     | update_statement { }
 ;
 
-create_statement: KW_CREATE KW_TABLE TK_ID TK_LEFT_PAR table_element_list TK_RIGHT_PAR { $$ = &createStatement{} }
+create_statement: KW_CREATE KW_TABLE TK_ID TK_LEFT_PAR table_element_list TK_RIGHT_PAR { $$ = &createStatement{$3, $5} }
 ;
 
-table_element_list: table_element_list TK_COMMA table_element {  }
-    | table_element {  }
+table_element_list: table_element_list TK_COMMA table_element { $$ = $1; $$ = append($$, $3) }
+    | table_element { $$ = append($$, $1) }
 ;
 
-table_element: column_definition {  }
+table_element: column_definition
 ;
 
-column_definition: TK_ID data_type column_constraint_list {  }
-    | TK_ID data_type { }
+column_definition: TK_ID data_type column_constraint_list { $$ = &columnDefinition{$1, $2, $3} }
+    | TK_ID data_type { $$ = &columnDefinition{$1, $2, nil } }
 ;
 
-data_type: KW_CHAR TK_LEFT_PAR INT_LIT TK_RIGHT_PAR { }
-    | KW_INTEGER { }
+data_type: KW_CHAR TK_LEFT_PAR INT_LIT TK_RIGHT_PAR { $$ = &charType{$3} }
+    | KW_INTEGER { $$ = &integerType{} }
 ;
 
-column_constraint_list: column_constraint_list column_constraint { }
-    | column_constraint { }
+column_constraint_list: column_constraint_list column_constraint { $$ = $1; $$ = append($$, $2) }
+    | column_constraint { $$ = append($$, $1) }
 ;
 
-column_constraint: constr_not_null { }
+column_constraint: constr_not_null
 ;
 
-constr_not_null: KW_NOT KW_NULL { }
-    | KW_DEFAULT value_literal { }
-    | KW_AUTO_INCREMENT { }
+constr_not_null: KW_NOT KW_NULL { $$ = &notNullConstraint{} }
+    | KW_DEFAULT value_literal { $$ = &defaultConstraint{$2} }
+    | KW_AUTO_INCREMENT { $$ = &autoincrementConstraint{} }
 ;
 
 alter_statement: KW_ALTER KW_TABLE TK_ID alter_instruction { }
@@ -137,8 +153,8 @@ values_list: values_list TK_COMMA value_literal
     | value_literal
 ;
 
-value_literal: STR_LIT
-    | INT_LIT
+value_literal: STR_LIT { $$ = $1 }
+    | INT_LIT { $$ = $1 }
 ;
 
 delete_statement: KW_DELETE TK_ID alias_spec opt_where_clause { $$ = &deleteStatement{} }
