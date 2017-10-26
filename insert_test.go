@@ -13,7 +13,7 @@ func TestInsert(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := parser.Parse(sqlFile); err != nil {
+	if _, err := parser.Parse(sqlFile); err != nil {
 		t.Error(err)
 	}
 }

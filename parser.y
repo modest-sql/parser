@@ -5,6 +5,8 @@ package parser
 
 import "io"
 
+var statements statementList
+
 %}
 
 %union {
@@ -56,7 +58,7 @@ import "io"
 
 %%
 
-input: statements_list { $1.execute() }
+input: statements_list { statements = $1 }
     | { }
 ;
 
@@ -251,7 +253,7 @@ func (l *Lexer) Error(s string) {
     })
 }
 
-func Parse(in io.Reader) (err error) {
+func Parse(in io.Reader) (commands []interface{}, err error) {
     defer func() {
         if r := recover(); r != nil {
             err = r.(error)
@@ -260,5 +262,5 @@ func Parse(in io.Reader) (err error) {
 
     yyParse(NewLexer(in))
 
-    return nil
+    return statements.convert(), nil
 }

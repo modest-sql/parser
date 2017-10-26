@@ -1,12 +1,26 @@
 package parser
 
-import "fmt"
+import (
+	"github.com/modest-sql/common"
+)
 
 type statement interface {
 	execute() error
+	convert() interface{}
 }
 
 type statementList []statement
+
+func (sl statementList) convert() (commands []interface{}) {
+	for _, statement := range sl {
+		command := statement.convert()
+
+		if command != nil {
+			commands = append(commands, command)
+		}
+	}
+	return commands
+}
 
 func (sl statementList) execute() error {
 	for _, statement := range sl {
@@ -23,9 +37,11 @@ type createStatement struct {
 	columnDefinitions columnDefinitions
 }
 
+func (s *createStatement) convert() interface{} {
+	return common.NewCreateTableCommand(s.identifier, s.columnDefinitions.convert())
+}
+
 func (s *createStatement) execute() error {
-	fmt.Println("TO DO: Create statement execution")
-	fmt.Printf("%+v\n", *(s.columnDefinitions[0]))
 	return nil
 }
 
@@ -33,8 +49,11 @@ type dropStatement struct {
 	identifier string
 }
 
+func (s *dropStatement) convert() interface{} {
+	return nil
+}
+
 func (s *dropStatement) execute() error {
-	fmt.Println("TO DO: Drop statement execution")
 	return nil
 }
 
@@ -44,8 +63,11 @@ type insertStatement struct {
 	values      []interface{}
 }
 
+func (s *insertStatement) convert() interface{} {
+	return nil
+}
+
 func (s *insertStatement) execute() error {
-	fmt.Println("TO DO: Insert statement execution")
 	return nil
 }
 
@@ -55,8 +77,11 @@ type updateStatement struct {
 	whereExpression expression
 }
 
+func (s *updateStatement) convert() interface{} {
+	return nil
+}
+
 func (s *updateStatement) execute() error {
-	fmt.Println("TO DO: Update statement execution")
 	return nil
 }
 
@@ -66,8 +91,11 @@ type deleteStatement struct {
 	whereExpression expression
 }
 
+func (s *deleteStatement) convert() interface{} {
+	return nil
+}
+
 func (s *deleteStatement) execute() error {
-	fmt.Println("TO DO: Delete statement execution")
 	return nil
 }
 
@@ -78,7 +106,10 @@ type selectStatement struct {
 	whereExpression expression
 }
 
+func (s *selectStatement) convert() interface{} {
+	return nil
+}
+
 func (s *selectStatement) execute() error {
-	fmt.Println("TO DO: Select statement execution")
 	return nil
 }
