@@ -2,24 +2,28 @@ package parser
 
 import "fmt"
 
-type error struct {
+//Error provides information about errors that occurred during parsing or execution.
+type Error struct {
 	line    int
 	column  int
 	message string
 }
 
-func (e *error) Line() int {
+//Line returns the line number in which the error occurred.
+func (e Error) Line() int {
 	return e.line
 }
 
-func (e *error) Column() int {
+//Column returns the column number in which the error occurred.
+func (e Error) Column() int {
 	return e.column
 }
 
-func (e *error) Message() string {
+//Message returns a description of the error that occurred.
+func (e Error) Message() string {
 	return e.message
 }
 
-func (e *error) Error() string {
+func (e Error) Error() string {
 	return fmt.Sprintf("%s at Line %d, Column %d", e.message, e.line, e.column)
 }

@@ -1,18 +1,23 @@
--- Expected tokens: 64
+-- Expected tokens: 65
 
 -- Binary operators
-+ - * / < > <= >= = between LIKE IS AND OR 
++ - * / < > <= >= = <>
 
 -- Literals
-27819 3.1416 'Hello' NULL TRUE FALSE
+27819 3.1416 'Hello'
 
 'Multi line
 string! Why not?'
+
 /*
     Slash star comment
 */
 
 -- Keywords
+between LIKE IS AND OR
+
+NULL TRUE FALSE
+
 SELECT FROM INNER JOIN ON WHERE GROUP BY NOT IN HAVING AS INTO SET
 
 SUM COUNT AVG min max

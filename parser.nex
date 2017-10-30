@@ -1,83 +1,98 @@
 /[ \t\f\r\n]/   { /* Skip white space */ }
 /--[^\n]*/      { /* Single line comment */ }
-/\/\*[^*]*\*\//  { /* Multi line comment */ }
+/\/\*[^*]*\*\// { /* Multi line comment */ }
 
-/-?[0-9]+/	        {i, _ := strconv.Atoi(yylex.Text()); lval.int_t = i; return INT_LIT; }
-/-?[0-9]+\.[0-9]*|-?\.[0-9]+|-?[0-9]+[Ee][-+]?[0-9]+|-?[0-9]+\.[0-9]*[Ee][-+]?[0-9]+|-?\.[0-9]*[Ee][-+]?[0-9]+/ { lval.float_t, _ = strconv.ParseFloat(yylex.Text(), 64);  return FLOAT_LIT;}
+/-?[0-9]+/	        { lval.int_t, _ = strconv.Atoi(yylex.Text()); return INT_LIT }
+/-?[0-9]+\.[0-9]*|-?\.[0-9]+|-?[0-9]+[Ee][-+]?[0-9]+|-?[0-9]+\.[0-9]*[Ee][-+]?[0-9]+|-?\.[0-9]*[Ee][-+]?[0-9]+/ { lval.float_t, _ = strconv.ParseFloat(yylex.Text(), 64); return FLOAT_LIT }
 
 
-/\+/        { return '+' }
-/\-/        { return '-' }
-/\*/        { return '*' }
-/\//        { return '/' }
-/\(/        { return '(' }
-/\)/        { return ')' }
-/\./        { return '.' }
-/;/         { return ';' }
-/\,/        { return ',' }
-/=/         { return '=' }
-/\</        { return '<' }
-/\>/        { return '>' }
+/\+/        { return TK_PLUS }
+/\-/        { return TK_MINUS }
+/\*/        { return TK_STAR }
+/\//        { return TK_DIV }
+/\(/        { return TK_LEFT_PAR }
+/\)/        { return TK_RIGHT_PAR }
+/\./        { return TK_DOT }
+/;/         { return TK_SEMICOLON }
+/\,/        { return TK_COMMA }
+/=/         { return TK_EQ }
+/\</        { return TK_LT }
+/\>/        { return TK_GT }
 /\>=/       { return TK_GTE }
 /\<=/       { return TK_LTE }
 /\<\>/      { return TK_NE }
 
-/[lL][iI][kK][eE]/              { return KW_LIKE }
-/[bB][eE][tT][wW][eE][eE][nN]/  { return KW_BETWEEN }
-/[aA][nN][dD]/                  { return KW_AND }
-/[oO][rR]/                      { return KW_OR }
-/[nN][oO][tT]/                  { return KW_NOT }
+/[lL][iI][kK][eE]/                  { return KW_LIKE }
+/[bB][eE][tT][wW][eE][eE][nN]/      { return KW_BETWEEN }
+/[aA][nN][dD]/                      { return KW_AND }
+/[oO][rR]/                          { return KW_OR }
+/[nN][oO][tT]/                      { return KW_NOT }
 /[dD][eE][fF][aA][uU][lL][lT]/      { return KW_DEFAULT }
-/[iI][nN][tT][eE][gG][eE][rR]/  { return KW_INTEGER }
-/[cC][hH][aA][rR]/              { return KW_CHAR }
-/[cC][rR][eE][aA][tT][eE]/      { return KW_CREATE }
-/[tT][aA][bB][lL][eE]/          { return KW_TABLE }
-/[dD][eE][lL][eE][tT][eE]/      { return KW_DELETE }
-/[iI][nN][sS][eE][rR][tT]/      { return KW_INSERT }
-/[iI][nN][tT][oO]/              { return KW_INTO }
-/[vV][aA][lL][uU][eE][sS]/      { return KW_VALUES }
-/[sS][eE][lL][eE][cC][tT]/      { return KW_SELECT }
-/[uU][pP][dD][aA][tT][eE]/      { return KW_UPDATE }
-/[wW][hH][eE][rR][eE]/          { return KW_WHERE }
-/[tT][rR][uU][eE]/              { return KW_TRUE }
-/[fF][aA][lL][sS][eE]/          { return KW_FALSE }
-/[fF][rR][oO][mM]/              { return KW_FROM }
-/[sS][eE][tT]/                  { return KW_SET }
-/[dD][rR][oO][pP]/              { return KW_DROP }
-/[iI][nN][nN][eE][rR]/          { return KW_INNER }
-/[jJ][oO][iI][nN]/              { return KW_JOIN   }
-/[hH][aA][vV][iI][nN][gG]/      { return KW_HAVING }
-/[sS][uU][mM]/                  { return KW_SUM }
-/[cC][oO][uU][nN][tT]/          { return KW_COUNT }
-/[aA][vV][gG]/                  { return KW_AVG }
-/[mM][iI][nN]/                  { return KW_MIN }
-/[mM][aA][xX]/                  { return KW_MAX }
-/[aA][lL][tT][eE][rR]/          { return KW_ALTER }
-/[nN][uU][lL][lL]/              { return KW_NULL }
-/[iI][nN]/                      { return KW_IN }
-/[iI][sS]/                      { return KW_IS }
-/[aA][sS]/                      { return KW_AS }
-/[bB][yY]/                      { return KW_BY }
-/[bB][oO][oO][lL][eE][aA][nN]/ { return KW_BOOLEAN}
-/[oO][nN]/                      { return KW_ON }
-/[aA][dD][dD]/                  { return KW_ADD }
-/[cC][oO][lL][uU][mM][nN]/      { return KW_COLUMN }
-/[gG][rR][oO][uU][pP]/          { return KW_GROUP }
+/[iI][nN][tT][eE][gG][eE][rR]/      { return KW_INTEGER }
+/[cC][hH][aA][rR]/                  { return KW_CHAR }
+/[cC][rR][eE][aA][tT][eE]/          { return KW_CREATE }
+/[tT][aA][bB][lL][eE]/              { return KW_TABLE }
+/[dD][eE][lL][eE][tT][eE]/          { return KW_DELETE }
+/[iI][nN][sS][eE][rR][tT]/          { return KW_INSERT }
+/[iI][nN][tT][oO]/                  { return KW_INTO }
+/[vV][aA][lL][uU][eE][sS]/          { return KW_VALUES }
+/[sS][eE][lL][eE][cC][tT]/          { return KW_SELECT }
+/[uU][pP][dD][aA][tT][eE]/          { return KW_UPDATE }
+/[wW][hH][eE][rR][eE]/              { return KW_WHERE }
+/[tT][rR][uU][eE]/                  { return KW_TRUE }
+/[fF][aA][lL][sS][eE]/              { return KW_FALSE }
+/[fF][rR][oO][mM]/                  { return KW_FROM }
+/[sS][eE][tT]/                      { return KW_SET }
+/[dD][rR][oO][pP]/                  { return KW_DROP }
+/[iI][nN][nN][eE][rR]/              { return KW_INNER }
+/[jJ][oO][iI][nN]/                  { return KW_JOIN   }
+/[hH][aA][vV][iI][nN][gG]/          { return KW_HAVING }
+/[sS][uU][mM]/                      { return KW_SUM }
+/[cC][oO][uU][nN][tT]/              { return KW_COUNT }
+/[aA][vV][gG]/                      { return KW_AVG }
+/[mM][iI][nN]/                      { return KW_MIN }
+/[mM][aA][xX]/                      { return KW_MAX }
+/[aA][lL][tT][eE][rR]/              { return KW_ALTER }
+/[nN][uU][lL][lL]/                  { return KW_NULL }
+/[iI][nN]/                          { return KW_IN }
+/[iI][sS]/                          { return KW_IS }
+/[aA][sS]/                          { return KW_AS }
+/[bB][yY]/                          { return KW_BY }
+/[bB][oO][oO][lL][eE][aA][nN]/      { return KW_BOOLEAN}
+/[oO][nN]/                          { return KW_ON }
+/[aA][dD][dD]/                      { return KW_ADD }
+/[cC][oO][lL][uU][mM][nN]/          { return KW_COLUMN }
+/[gG][rR][oO][uU][pP]/              { return KW_GROUP }
 /[dD][aA][tT][eE][tT][iI][mM][eE]/  { return KW_DATETIME }
-/[fF][lL][oO][aA][tT]/          { return KW_FLOAT }
+/[fF][lL][oO][aA][tT]/              { return KW_FLOAT }
 /[aA][uU][tT][oO]_[iI][nN][cC][rR][eE][mM][eE][nN][tT]/ { return KW_AUTO_INCREMENT}
-/'[^']*'/                       { lval.string_t =strings.Replace(yylex.Text(), "'", "", -1);  return STR_LIT }
-/"[^"]*"/                       { lval.string_t =strings.Replace(yylex.Text(), "\"", "", -1);  return STR_LIT }
 
-/'(\\.|[^'])*$/	 { fmt.Println("Lexer: Unterminated string:", yylex.Text()); }
-/\"(\\.|[^"])*$/ { fmt.Println("Lexer: Unterminated string:", yylex.Text()); }
+/'[^']*'/                       { lval.string_t = strings.Replace(yylex.Text(), "'", "", -1);  return STR_LIT }
+/"[^"]*"/                       { lval.string_t = strings.Replace(yylex.Text(), "\"", "", -1);  return STR_LIT }
 
-/[a-zA-Z][a-zA-Z0-9_]*/         { lval.string_t = yylex.Text(); return TK_ID }
-/./                             { 
-                                    panic(&error{
+/[a-zA-Z][a-zA-Z0-9_]*/         { lval.string_t = strings.ToLower(yylex.Text()); return TK_ID }
+
+/'(\\.|[^'])*$/	                { 
+                                    panic(Error{
                                             line: yylex.Line() + 1,
                                             column: yylex.Column() + 1,
-                                            message: fmt.Sprintf("Syntax Error: Unexpected token '%s'", yylex.Text()),
+                                            message: fmt.Sprintf("syntax error: unterminated string literal"),
+                                        })
+                                }
+
+/\"(\\.|[^"])*$/                { 
+                                    panic(Error{
+                                            line: yylex.Line() + 1,
+                                            column: yylex.Column() + 1,
+                                            message: fmt.Sprintf("syntax error: unterminated string literal"),
+                                        })
+                                }
+
+/./                             { 
+                                    panic(Error{
+                                            line: yylex.Line() + 1,
+                                            column: yylex.Column() + 1,
+                                            message: fmt.Sprintf("syntax error: unexpected token '%s'", yylex.Text()),
                                         })
                                 }
 //
@@ -85,6 +100,6 @@
 package parser
 
 import (
-    "strconv"
     "fmt"
+    "strconv"
 )

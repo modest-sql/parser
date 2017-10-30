@@ -1,1 +1,1 @@
-DELETE peliculas WHERE id_pelicula = 0;
+DELETE peliculas WHERE id_pelicula = 0
