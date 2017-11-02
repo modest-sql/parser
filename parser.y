@@ -5,6 +5,8 @@ package parser
 
 import "io"
 
+var statements statementList
+
 %}
 
 %union {
@@ -17,6 +19,12 @@ import "io"
     stmt_list_t statementList
     stmt_t statement
 
+    col_list_t columnDefinitions
+    col_t *columnDefinition
+
+    data_t dataType
+
+    obj_list_t []interface{}
     obj_t interface{}
 }
 
@@ -32,15 +40,26 @@ import "io"
 
 %token<int_t> INT_LIT
 %token<float_t> FLOAT_LIT
-%token<string_t> TK_ID STR_LIT
+%token<string_t> TK_ID STR_LIT multipart_id_suffix
 
 %type<stmt_list_t> statements_list
 %type<stmt_t> statement data_statement schema_statement create_statement alter_statement drop_statement
 %type<stmt_t> select_statement insert_statement delete_statement update_statement
 
+%type<col_list_t> table_element_list
+%type<col_t> table_element column_definition
+
+%type<obj_list_t> column_constraint_list
+%type<obj_t> column_constraint constr_not_null
+
+%type<data_t> data_type
+
+%type<obj_t> value_literal
+%type<expr_t> addi_factor relational_factor relational_term truth_value between_term relational_expression
+%type<expr_t> boolean_factor boolean_term boolean_value_expression
 %%
 
-input: statements_list { $1.execute() }
+input: statements_list { statements = $1 }
     | { }
 ;
 
@@ -64,48 +83,48 @@ data_statement: select_statement { }
     | update_statement { }
 ;
 
-create_statement: KW_CREATE KW_TABLE TK_ID TK_LEFT_PAR table_element_list TK_RIGHT_PAR { $$ = &createStatement{} }
+create_statement: KW_CREATE KW_TABLE TK_ID TK_LEFT_PAR table_element_list TK_RIGHT_PAR { $$ = &createStatement{$3, $5} }
 ;
 
-table_element_list: table_element_list TK_COMMA table_element {  }
-    | table_element {  }
+table_element_list: table_element_list TK_COMMA table_element { $$ = $1; $$ = append($$, $3) }
+    | table_element { $$ = append($$, $1) }
 ;
 
-table_element: column_definition {  }
+table_element: column_definition
 ;
 
-column_definition: TK_ID data_type column_constraint_list {  }
-    | TK_ID data_type { }
+column_definition: TK_ID data_type column_constraint_list { $$ = &columnDefinition{$1, $2, $3} }
+    | TK_ID data_type { $$ = &columnDefinition{$1, $2, nil } }
 ;
 
-data_type: KW_CHAR TK_LEFT_PAR INT_LIT TK_RIGHT_PAR { }
-    | KW_INTEGER { }
+data_type: KW_CHAR TK_LEFT_PAR INT_LIT TK_RIGHT_PAR { $$ = &charType{$3} }
+    | KW_INTEGER { $$ = &integerType{} }
 ;
 
-column_constraint_list: column_constraint_list column_constraint { }
-    | column_constraint { }
+column_constraint_list: column_constraint_list column_constraint { $$ = $1; $$ = append($$, $2) }
+    | column_constraint { $$ = append($$, $1) }
 ;
 
-column_constraint: constr_not_null { }
+column_constraint: constr_not_null
 ;
 
-constr_not_null: KW_NOT KW_NULL { }
-    | KW_DEFAULT value_literal { }
-    | KW_AUTO_INCREMENT { }
+constr_not_null: KW_NOT KW_NULL { $$ = &notNullConstraint{} }
+    | KW_DEFAULT value_literal { $$ = &defaultConstraint{$2} }
+    | KW_AUTO_INCREMENT { $$ = &autoincrementConstraint{} }
 ;
 
 alter_statement: KW_ALTER KW_TABLE TK_ID alter_instruction { }
 ;
 
-alter_instruction: KW_ADD TK_ID { }
-    | KW_DROP KW_COLUMN TK_ID data_type column_constraint_list { }
+alter_instruction: KW_DROP TK_ID { }
+    | KW_ADD KW_COLUMN TK_ID data_type column_constraint_list { }
 ;
 
 drop_statement: KW_DROP KW_TABLE TK_ID { $$ = &dropStatement{} }
 ;
 
-select_statement: KW_SELECT select_col_list KW_FROM TK_ID alias_spec where_clause { $$ = &selectStatement{} }
-    | KW_SELECT select_col_list KW_FROM TK_ID where_clause { $$ = &selectStatement{} }
+select_statement: KW_SELECT select_col_list KW_FROM TK_ID alias_spec opt_where_clause { $$ = &selectStatement{} }
+    | KW_SELECT select_col_list KW_FROM TK_ID opt_where_clause { $$ = &selectStatement{} }
 ;
 
 select_col_list: select_col_list TK_COMMA select_col { }
@@ -137,25 +156,26 @@ values_list: values_list TK_COMMA value_literal
     | value_literal
 ;
 
-value_literal: STR_LIT
-    | INT_LIT
+value_literal: STR_LIT { $$ = $1 }
+    | INT_LIT { $$ = $1 }
 ;
 
-delete_statement: KW_DELETE TK_ID alias_spec where_clause { $$ = &deleteStatement{} }
-    | KW_DELETE TK_ID where_clause { $$ = &deleteStatement{} }
+delete_statement: KW_DELETE TK_ID alias_spec opt_where_clause { $$ = &deleteStatement{} }
+    | KW_DELETE TK_ID opt_where_clause { $$ = &deleteStatement{} }
 ;
 
 alias_spec: KW_AS TK_ID { }
     | TK_ID { }
 ;
 
-where_clause: KW_WHERE search_condition { }
+opt_where_clause: KW_WHERE search_condition { }
+    | { }
 ;
 
 search_condition: boolean_value_expression
 ;
 
-update_statement: KW_UPDATE TK_ID set_list where_clause { $$ = &updateStatement{} }
+update_statement: KW_UPDATE TK_ID set_list opt_where_clause { $$ = &updateStatement{} }
 ;
 
 set_list: KW_SET set_assignments_list { }
@@ -165,59 +185,59 @@ set_assignments_list: set_assignments_list TK_COMMA set_assignment { }
     | set_assignment { }
 ;
 
-set_assignment: TK_ID TK_EQ relational_term { }
+set_assignment: TK_ID TK_EQ relational_term { $$ = &eqExpression{ &idExpression{$1,nil , $3 } }
 ;
 
-boolean_value_expression: boolean_value_expression KW_OR boolean_term { }
-    | boolean_term { }
+boolean_value_expression: boolean_value_expression KW_OR boolean_term { $$ = &orExpression{ $1 , $3 } }
+    | boolean_term { $$ = $1 }
 ;
 
-boolean_term: boolean_term KW_AND boolean_factor { }
-    | boolean_factor { }
+boolean_term: boolean_term KW_AND boolean_factor { $$ = &andExpression{ $1 , $3 } }
+    | boolean_factor { $$ = $1  }
 ;
 
-boolean_factor: KW_NOT relational_expression { }
-    | relational_expression { }
+boolean_factor: KW_NOT relational_expression { $$ = &notExpression{ $2 } }
+    | relational_expression { $$ = $1 }
 ;
 
-relational_expression: relational_expression TK_LT relational_term { }
-    | relational_expression TK_GT relational_term { }
-    | relational_expression TK_EQ relational_term { }
-    | relational_expression TK_LTE relational_term { }
-    | relational_expression TK_GTE relational_term { }
-    | relational_expression TK_NE relational_term { }
-    | relational_expression KW_LIKE relational_term { }
-    | relational_expression KW_BETWEEN between_term { }
-    | relational_term { }
+relational_expression: relational_expression TK_LT relational_term { $$ = &ltExpression{ $1 , $3 } }
+    | relational_expression TK_GT relational_term { $$ = &gtExpression{ $1 , $3 } }
+    | relational_expression TK_EQ relational_term { $$ = &eqExpression{ $1 , $3 } }
+    | relational_expression TK_LTE relational_term { $$ = &lteExpression{ $1 , $3 } }
+    | relational_expression TK_GTE relational_term { $$ = &gteExpression{ $1 , $3 } }
+    | relational_expression TK_NE relational_term { $$ = &neExpression{ $1 , $3 } }
+    | relational_expression KW_LIKE relational_term { $$ = &likeExpression{ $1 , $3 }}
+    | relational_expression KW_BETWEEN between_term { $$ = &betweenExpression{ $1 , $3}}
+    | relational_term { $$ = $1 }
 ;
 
-between_term: INT_LIT KW_AND INT_LIT { }
+between_term: INT_LIT KW_AND INT_LIT { $$ = &betweenExpression{ &intExpression{$1} , &intExpression{$3} } }
 ;
 
-relational_term: relational_term TK_PLUS relational_factor { }
-    | relational_term TK_MINUS relational_factor { }
-    | relational_factor { }
+relational_term: relational_term TK_PLUS relational_factor { $$ = &sumExpression{ $1 , $3 } }
+    | relational_term TK_MINUS relational_factor { $$ = &subExpression{ $1 , $3 } }
+    | relational_factor { $$ = $1 }
 ;
 
-relational_factor: relational_factor TK_STAR addi_factor { }
-    | relational_factor TK_DIV addi_factor { }
-    | addi_factor { }
+relational_factor: relational_factor TK_STAR addi_factor { $$ = &multExpression{ $1 , $3 } }
+    | relational_factor TK_DIV addi_factor { $$ = &divExpression{ $1 , $3 } }
+    | addi_factor { $$ = $1  }
 ;
 
-addi_factor: INT_LIT { }
-    | truth_value { }
-    | STR_LIT { }
-    | TK_ID { }
-    | TK_ID multipart_id_suffix { }
-    | TK_LEFT_PAR relational_expression TK_RIGHT_PAR { }
+addi_factor: INT_LIT { $$ = &intExpression{ $1 } }
+    | truth_value { $$ = $1 }
+    | STR_LIT { $$ = &stringExpression{ $1 }}
+    | TK_ID { $$ = idExpression{ $1 , nil } }
+    | TK_ID multipart_id_suffix {$$ = idExpression{ $1 , $2 }  }
+    | TK_LEFT_PAR relational_expression TK_RIGHT_PAR { $$ = $2 }
 ;
 
-multipart_id_suffix: TK_DOT TK_ID { }
+multipart_id_suffix: TK_DOT TK_ID { $$ = $2 }
 ;
 
-truth_value: KW_TRUE { }
-    | KW_FALSE { }
-    | KW_NULL
+truth_value: KW_TRUE { $$ = &trueExpression{} }
+    | KW_FALSE { $$ = &falseExpression{} }
+    | KW_NULL { $$ = &nullExpression{} }
 ;
 
 %%
@@ -234,7 +254,7 @@ func (l *Lexer) Error(s string) {
     })
 }
 
-func Parse(in io.Reader) (err error) {
+func Parse(in io.Reader) (commands []interface{}, err error) {
     defer func() {
         if r := recover(); r != nil {
             err = r.(error)
@@ -243,5 +263,5 @@ func Parse(in io.Reader) (err error) {
 
     yyParse(NewLexer(in))
 
-    return nil
+    return statements.convert(), nil
 }
