@@ -21,10 +21,11 @@ var statements statementList
 
     col_list_t columnDefinitions
     col_t *columnDefinition
-
+    assignment_t assignment
     data_t dataType
-
+    assignments_list []assignment
     obj_list_t []interface{}
+    string_list_t []string
     obj_t interface{}
 }
 
@@ -49,14 +50,16 @@ var statements statementList
 %type<col_list_t> table_element_list
 %type<col_t> table_element column_definition
 
-%type<obj_list_t> column_constraint_list
+%type<obj_list_t> column_constraint_list values_list values_tuple values_tuples_list
 %type<obj_t> column_constraint constr_not_null
 
 %type<data_t> data_type
-
+%type<assignments_list>set_assignments_list
+%type<assignment>set_assignment
 %type<obj_t> value_literal
 %type<expr_t> addi_factor relational_factor relational_term truth_value between_term relational_expression
-%type<expr_t> boolean_factor boolean_term boolean_value_expression
+%type<expr_t> boolean_factor boolean_term boolean_value_expression opt_where_clause search_condition
+%type<string_list_t>column_names_list
 %%
 
 input: statements_list { statements = $1 }
@@ -68,19 +71,19 @@ statements_list: statements_list statement TK_SEMICOLON { $$ = $1; $$ = append($
     | statement { $$ = append($$, $1) }
 ;
 
-statement: data_statement { }
-    | schema_statement { }
+statement: data_statement { $$ = $1}
+    | schema_statement { $$ = $1}
 ;
 
-schema_statement: create_statement {  }
-    | alter_statement { }
-    | drop_statement { }
+schema_statement: create_statement { $$ = $1 }
+    | alter_statement { $$ = $1 }
+    | drop_statement { $$ = $1 }
 ;
 
-data_statement: select_statement { }
-    | insert_statement { }
-    | delete_statement { }
-    | update_statement { }
+data_statement: select_statement { $$ = $1 }
+    | insert_statement { $$ = $1  }
+    | delete_statement { $$ = $1 }
+    | update_statement { $$ = $1 }
 ;
 
 create_statement: KW_CREATE KW_TABLE TK_ID TK_LEFT_PAR table_element_list TK_RIGHT_PAR { $$ = &createStatement{$3, $5} }
@@ -90,7 +93,7 @@ table_element_list: table_element_list TK_COMMA table_element { $$ = $1; $$ = ap
     | table_element { $$ = append($$, $1) }
 ;
 
-table_element: column_definition
+table_element: column_definition {$$ = $1}
 ;
 
 column_definition: TK_ID data_type column_constraint_list { $$ = &columnDefinition{$1, $2, $3} }
@@ -113,14 +116,14 @@ constr_not_null: KW_NOT KW_NULL { $$ = &notNullConstraint{} }
     | KW_AUTO_INCREMENT { $$ = &autoincrementConstraint{} }
 ;
 
-alter_statement: KW_ALTER KW_TABLE TK_ID alter_instruction { }
+alter_statement: KW_ALTER KW_TABLE TK_ID alter_instruction {  }
 ;
 
 alter_instruction: KW_DROP TK_ID { }
     | KW_ADD KW_COLUMN TK_ID data_type column_constraint_list { }
 ;
 
-drop_statement: KW_DROP KW_TABLE TK_ID { $$ = &dropStatement{} }
+drop_statement: KW_DROP KW_TABLE TK_ID { $$ = &dropStatement{ $3 } }
 ;
 
 select_statement: KW_SELECT select_col_list KW_FROM TK_ID alias_spec opt_where_clause { $$ = &selectStatement{} }
@@ -138,22 +141,22 @@ select_col: TK_STAR { }
     | TK_ID multipart_id_suffix { }
 ;
 
-insert_statement: KW_INSERT KW_INTO TK_ID TK_LEFT_PAR column_names_list TK_RIGHT_PAR KW_VALUES values_tuples_list { $$ = &insertStatement{} }
+insert_statement: KW_INSERT KW_INTO TK_ID TK_LEFT_PAR column_names_list TK_RIGHT_PAR KW_VALUES values_tuples_list {  $$ = &insertStatement{$3,$5,$8} }
 ;
 
-column_names_list: column_names_list TK_COMMA TK_ID { }
-    | TK_ID { }
+column_names_list: column_names_list TK_COMMA TK_ID { $$ = $1; $$ = append($$, $3) }
+    | TK_ID { $$ = append($$,$1) }
+;
+ 
+values_tuples_list: values_tuples_list TK_COMMA values_tuple { $$ = $1 ; $$ = append($$,$3) }
+    | values_tuple { $$ = append($1)}
 ;
 
-values_tuples_list: values_tuples_list TK_COMMA values_tuple { }
-    | values_tuple { }
+values_tuple: TK_LEFT_PAR values_list TK_RIGHT_PAR {$$ = $2}
 ;
 
-values_tuple: TK_LEFT_PAR values_list TK_RIGHT_PAR
-;
-
-values_list: values_list TK_COMMA value_literal
-    | value_literal
+values_list: values_list TK_COMMA value_literal { $$ = $1; $$ = append($$,$3)}
+    | value_literal {$$ = append($$,$1) }
 ;
 
 value_literal: STR_LIT { $$ = $1 }
@@ -168,24 +171,24 @@ alias_spec: KW_AS TK_ID { }
     | TK_ID { }
 ;
 
-opt_where_clause: KW_WHERE search_condition { }
-    | { }
+opt_where_clause: KW_WHERE search_condition { $$ = $2 }
+    | { $$ = nil }
 ;
 
-search_condition: boolean_value_expression
+search_condition: boolean_value_expression {$$ = $1}
 ;
 
-update_statement: KW_UPDATE TK_ID set_list opt_where_clause { $$ = &updateStatement{} }
+update_statement: KW_UPDATE TK_ID set_list opt_where_clause { $$ = &updateStatement{$2,$3,$4} }
 ;
 
-set_list: KW_SET set_assignments_list { }
+set_list: KW_SET set_assignments_list { $$ = $1 }
 ;
 
-set_assignments_list: set_assignments_list TK_COMMA set_assignment { }
-    | set_assignment { }
+set_assignments_list: set_assignments_list TK_COMMA set_assignment { $$ = append($$,$1)}
+    | set_assignment { $$ = append($$,$1)}
 ;
 
-set_assignment: TK_ID TK_EQ relational_term { $$ = &eqExpression{ &idExpression{$1,nil , $3 } }
+set_assignment: TK_ID TK_EQ relational_term { $$ = &eqExpression{ &assignment{$1 , $3 } }
 ;
 
 boolean_value_expression: boolean_value_expression KW_OR boolean_term { $$ = &orExpression{ $1 , $3 } }
