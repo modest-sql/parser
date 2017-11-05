@@ -26,6 +26,7 @@ var statements statementList
     assignments_list []assignment
     obj_list_t []interface{}
     string_list_t []string
+
     obj_t interface{}
 }
 
@@ -60,6 +61,7 @@ var statements statementList
 %type<expr_t> addi_factor relational_factor relational_term truth_value between_term relational_expression
 %type<expr_t> boolean_factor boolean_term boolean_value_expression opt_where_clause search_condition
 %type<string_list_t>column_names_list
+
 %%
 
 input: statements_list { statements = $1 }
