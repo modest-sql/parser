@@ -1,7 +1,6 @@
 package parser
 
 type expression interface {
-	
 }
 
 type idExpression struct {
@@ -73,18 +72,20 @@ type gteExpression struct {
 	leftValue  expression
 }
 
-
 type betweenExpression struct {
 	rightValue expression
 	leftValue  expression
 }
-
 
 type likeExpression struct {
 	rightValue expression
 	leftValue  expression
 }
 
+type assignmentExpression struct {
+	rightValue expression
+	leftValue  expression
+}
 
 type notExpression struct {
 	not expression
@@ -97,6 +98,7 @@ type andExpression struct {
 type orExpression struct {
 	rightValue expression
 	leftValue  expression
+	
 }
 type nullExpression struct {
 }

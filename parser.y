@@ -22,9 +22,9 @@ var statements statementList
 
     col_list_t columnDefinitions
     col_t *columnDefinition
-    assignment_t assignment
+    assignment_t assignmentExpression
     data_t dataType
-    assignments_list []assignment
+    assignments_list []assignmentExpression
     obj_list_t []interface{}
     string_list_t []string
 
@@ -189,7 +189,7 @@ set_list: KW_SET set_assignments_list { $$ = $2 }
 ;
 
 set_assignments_list: set_assignments_list TK_COMMA set_assignment { $$ = $1; $$ = append($1, $3) }
-    | set_assignment { $$ = []assignment; $$ = append($$, $1) }
+    | set_assignment {  $$ = append($$, $1) }
 ;
 
 set_assignment: TK_ID TK_EQ relational_term { $$ = &assignment{ $1 , $3 } }
