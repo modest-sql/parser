@@ -4,6 +4,7 @@
 package parser
 
 import "io"
+/*import "github.com/modest-sql/common"*/
 
 var statements statementList
 
@@ -42,7 +43,8 @@ var statements statementList
 
 %token<int_t> INT_LIT
 %token<float_t> FLOAT_LIT
-%token<string_t> TK_ID STR_LIT multipart_id_suffix
+%token<string_t> TK_ID STR_LIT
+%type<string_t> multipart_id_suffix
 
 %type<stmt_list_t> statements_list
 %type<stmt_t> statement data_statement schema_statement create_statement alter_statement drop_statement
@@ -55,7 +57,7 @@ var statements statementList
 %type<obj_t> column_constraint constr_not_null
 
 %type<data_t> data_type
-%type<assignments_list>set_assignments_list
+%type<assignments_list>set_assignments_list set_list
 %type<assignment>set_assignment
 %type<obj_t> value_literal
 %type<expr_t> addi_factor relational_factor relational_term truth_value between_term relational_expression
@@ -183,14 +185,14 @@ search_condition: boolean_value_expression {$$ = $1}
 update_statement: KW_UPDATE TK_ID set_list opt_where_clause { $$ = &updateStatement{$2,$3,$4} }
 ;
 
-set_list: KW_SET set_assignments_list { $$ = $1 }
+set_list: KW_SET set_assignments_list { $$ = $2 }
 ;
 
-set_assignments_list: set_assignments_list TK_COMMA set_assignment { $$ = append($$,$1)}
-    | set_assignment { $$ = append($$,$1)}
+set_assignments_list: set_assignments_list TK_COMMA set_assignment { $$ = $1; $$ = append($1, $3) }
+    | set_assignment { $$ = []assignment; $$ = append($$, $1) }
 ;
 
-set_assignment: TK_ID TK_EQ relational_term { $$ = &eqExpression{ &assignment{$1 , $3 } }
+set_assignment: TK_ID TK_EQ relational_term { $$ = &assignment{ $1 , $3 } }
 ;
 
 boolean_value_expression: boolean_value_expression KW_OR boolean_term { $$ = &orExpression{ $1 , $3 } }
@@ -211,8 +213,8 @@ relational_expression: relational_expression TK_LT relational_term { $$ = &ltExp
     | relational_expression TK_LTE relational_term { $$ = &lteExpression{ $1 , $3 } }
     | relational_expression TK_GTE relational_term { $$ = &gteExpression{ $1 , $3 } }
     | relational_expression TK_NE relational_term { $$ = &neExpression{ $1 , $3 } }
-    | relational_expression KW_LIKE relational_term { $$ = &likeExpression{ $1 , $3 }}
-    | relational_expression KW_BETWEEN between_term { $$ = &betweenExpression{ $1 , $3}}
+    | relational_expression KW_LIKE relational_term { $$ = &likeExpression{ $1 , $3 } }
+    | relational_expression KW_BETWEEN between_term { $$ = &betweenExpression{ $1 , $3} }
     | relational_term { $$ = $1 }
 ;
 
@@ -231,9 +233,9 @@ relational_factor: relational_factor TK_STAR addi_factor { $$ = &multExpression{
 
 addi_factor: INT_LIT { $$ = &intExpression{ $1 } }
     | truth_value { $$ = $1 }
-    | STR_LIT { $$ = &stringExpression{ $1 }}
-    | TK_ID { $$ = idExpression{ $1 , nil } }
-    | TK_ID multipart_id_suffix {$$ = idExpression{ $1 , $2 }  }
+    | STR_LIT { $$ = &stringExpression{ $1 } }
+    | TK_ID { $$ = &idExpression{ $1 , "" } }
+    | TK_ID multipart_id_suffix { $$ = idExpression{ $1 , $2 }  }
     | TK_LEFT_PAR relational_expression TK_RIGHT_PAR { $$ = $2 }
 ;
 
