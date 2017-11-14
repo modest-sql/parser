@@ -19,12 +19,13 @@ var statements statementList
 
     stmt_list_t statementList
     stmt_t statement
-
+    columnSpec_t columnSpec
+    columnSpec_list_t []columnSpec
     col_list_t columnDefinitions
     col_t *columnDefinition
-    assignment_t assignmentExpression
+    assignment_t assignment
     data_t dataType
-    assignments_list []assignmentExpression
+    assignments_list []assignment
     obj_list_t []interface{}
     string_list_t []string
 
@@ -44,7 +45,8 @@ var statements statementList
 %token<int_t> INT_LIT
 %token<float_t> FLOAT_LIT
 %token<string_t> TK_ID STR_LIT
-%type<string_t> multipart_id_suffix
+%type<string_t> multipart_id_suffix alias_spec
+
 
 %type<stmt_list_t> statements_list
 %type<stmt_t> statement data_statement schema_statement create_statement alter_statement drop_statement
@@ -54,15 +56,17 @@ var statements statementList
 %type<col_t> table_element column_definition
 
 %type<obj_list_t> column_constraint_list values_list values_tuple values_tuples_list
-%type<obj_t> column_constraint constr_not_null
+%type<obj_t> column_constraint constr_not_null alter_instruction
 
 %type<data_t> data_type
 %type<assignments_list>set_assignments_list set_list
-%type<assignment>set_assignment
+%type<assignment_t>set_assignment
 %type<obj_t> value_literal
 %type<expr_t> addi_factor relational_factor relational_term truth_value between_term relational_expression
 %type<expr_t> boolean_factor boolean_term boolean_value_expression opt_where_clause search_condition
-%type<string_list_t>column_names_list
+%type<string_list_t>column_names_list 
+%type<columnSpec_t>select_col
+%type<columnSpec_list_t>select_col_list 
 
 %%
 
@@ -112,7 +116,7 @@ column_constraint_list: column_constraint_list column_constraint { $$ = $1; $$ =
     | column_constraint { $$ = append($$, $1) }
 ;
 
-column_constraint: constr_not_null
+column_constraint: constr_not_null { $$  = $1 }
 ;
 
 constr_not_null: KW_NOT KW_NULL { $$ = &notNullConstraint{} }
@@ -120,29 +124,29 @@ constr_not_null: KW_NOT KW_NULL { $$ = &notNullConstraint{} }
     | KW_AUTO_INCREMENT { $$ = &autoincrementConstraint{} }
 ;
 
-alter_statement: KW_ALTER KW_TABLE TK_ID alter_instruction {  }
+alter_statement: KW_ALTER KW_TABLE TK_ID alter_instruction { $$ = &alterStatement{$3,$4}  }
 ;
 
-alter_instruction: KW_DROP TK_ID { }
-    | KW_ADD KW_COLUMN TK_ID data_type column_constraint_list { }
+alter_instruction: KW_DROP TK_ID {$$ = &alterDrop{ $2 } }
+    | KW_ADD KW_COLUMN TK_ID data_type column_constraint_list { $$ = &alterAdd{ $3,$4,$5}}
 ;
 
 drop_statement: KW_DROP KW_TABLE TK_ID { $$ = &dropStatement{ $3 } }
 ;
 
-select_statement: KW_SELECT select_col_list KW_FROM TK_ID alias_spec opt_where_clause { $$ = &selectStatement{} }
-    | KW_SELECT select_col_list KW_FROM TK_ID opt_where_clause { $$ = &selectStatement{} }
+select_statement: KW_SELECT select_col_list KW_FROM TK_ID alias_spec opt_where_clause { $$ = &selectStatement{$4,$5,$2,$6} }
+    | KW_SELECT select_col_list KW_FROM TK_ID opt_where_clause { $$ = &selectStatement{$4,"",$2,$5} }
 ;
 
-select_col_list: select_col_list TK_COMMA select_col { }
-    | select_col { }
+select_col_list: select_col_list TK_COMMA select_col { $$ = $1 ; $$ = append($$,$3) }
+    | select_col { $$ = append($$,$1) }
 ;
 
-select_col: TK_STAR { }
-    | TK_ID alias_spec { }
-    | TK_ID { }
-    | TK_ID multipart_id_suffix alias_spec { }
-    | TK_ID multipart_id_suffix { }
+select_col: TK_STAR { $$ = columnSpec{true,"","",""} }
+    | TK_ID alias_spec {$$ = columnSpec{false,$1,"",$2} }
+    | TK_ID { $$ = columnSpec{false,$1,"",""}}
+    | TK_ID multipart_id_suffix alias_spec { $$ = columnSpec{false,$1,$2,$3} }
+    | TK_ID multipart_id_suffix { $$ = columnSpec{false,$1,$2," "} }
 ;
 
 insert_statement: KW_INSERT KW_INTO TK_ID TK_LEFT_PAR column_names_list TK_RIGHT_PAR KW_VALUES values_tuples_list {  $$ = &insertStatement{$3,$5,$8} }
@@ -167,12 +171,12 @@ value_literal: STR_LIT { $$ = $1 }
     | INT_LIT { $$ = $1 }
 ;
 
-delete_statement: KW_DELETE TK_ID alias_spec opt_where_clause { $$ = &deleteStatement{} }
-    | KW_DELETE TK_ID opt_where_clause { $$ = &deleteStatement{} }
+delete_statement: KW_DELETE TK_ID alias_spec opt_where_clause { $$ = &deleteStatement{$2,$3,$4} }
+    | KW_DELETE TK_ID opt_where_clause { $$ = &deleteStatement{$2,"",$3} }
 ;
 
-alias_spec: KW_AS TK_ID { }
-    | TK_ID { }
+alias_spec: KW_AS TK_ID { $$ = $2 }
+    | TK_ID { $$ = $1  }
 ;
 
 opt_where_clause: KW_WHERE search_condition { $$ = $2 }
@@ -192,7 +196,7 @@ set_assignments_list: set_assignments_list TK_COMMA set_assignment { $$ = $1; $$
     | set_assignment {  $$ = append($$, $1) }
 ;
 
-set_assignment: TK_ID TK_EQ relational_term { $$ = &assignment{ $1 , $3 } }
+set_assignment: TK_ID TK_EQ relational_term { $$ = assignment{ $1 , $3 } }
 ;
 
 boolean_value_expression: boolean_value_expression KW_OR boolean_term { $$ = &orExpression{ $1 , $3 } }

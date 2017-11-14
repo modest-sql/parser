@@ -99,10 +99,17 @@ func (s *deleteStatement) execute() error {
 	return nil
 }
 
+type columnSpec struct {
+	isStar bool
+	table  string
+	column string
+	alias  string
+}
+
 type selectStatement struct {
 	table           string
 	alias           string
-	selectColumns   []interface{}
+	selectColumns   []columnSpec
 	whereExpression expression
 }
 
@@ -112,4 +119,26 @@ func (s *selectStatement) convert() interface{} {
 
 func (s *selectStatement) execute() error {
 	return nil
+}
+
+type alterStatement struct {
+	table       string
+	instruction interface{}
+}
+
+func (s *alterStatement) convert() interface{} {
+	return nil
+}
+
+func (s *alterStatement) execute() error {
+	return nil
+}
+
+type alterDrop struct {
+	table string
+}
+type alterAdd struct {
+	table             string
+	dataType          dataType
+	columnConstraints []interface{}
 }

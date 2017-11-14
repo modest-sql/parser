@@ -82,12 +82,7 @@ type likeExpression struct {
 	leftValue  expression
 }
 
-type assignmentExpression struct {
-	rightValue expression
-	leftValue  expression
-}
-
-type notExpression struct {
+	type notExpression struct {
 	not expression
 }
 type andExpression struct {
@@ -98,7 +93,6 @@ type andExpression struct {
 type orExpression struct {
 	rightValue expression
 	leftValue  expression
-	
 }
 type nullExpression struct {
 }

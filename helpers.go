@@ -78,16 +78,7 @@ func (c *columnDefinition) defaultValue() interface{} {
 	return nil
 }
 
-type starSelectColumn struct {
-}
-
-type selectColumn struct {
-	identifier string
-	alias      string
-	source     string
-}
-
 type assignment struct {
 	identifier string
-	value      interface{}
+	value      expression
 }
