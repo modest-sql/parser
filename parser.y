@@ -134,7 +134,7 @@ alter_instruction: KW_DROP TK_ID {$$ = &alterDrop{ $2 } }
 drop_statement: KW_DROP KW_TABLE TK_ID { $$ = &dropStatement{ $3 } }
 ;
 
-select_statement: KW_SELECT select_col_list KW_FROM TK_ID alias_spec opt_where_clause { $$ = &selectStatement{$4,$5,$2,$6} }
+select_statement: KW_SELECT select_col_list KW_FROM TK_ID alias_spec opt_joins_list opt_where_clause { $$ = &selectStatement{$4,$5,$2,$6} }
     | KW_SELECT select_col_list KW_FROM TK_ID opt_where_clause { $$ = &selectStatement{$4,"",$2,$5} }
 ;
 
@@ -169,6 +169,18 @@ values_list: values_list TK_COMMA value_literal { $$ = $1; $$ = append($$,$3)}
 
 value_literal: STR_LIT { $$ = $1 }
     | INT_LIT { $$ = $1 }
+;
+
+opt_joins_list: join_list { }
+    | { }
+;
+
+join_list: join_list inner_join { }
+    | inner_join { }
+;
+
+inner_join: KW_INNER KW_JOIN TK_ID alias_spec ON search_condition { }
+    | KW_INNER KW_JOIN TK_ID ON search_condition { }
 ;
 
 delete_statement: KW_DELETE TK_ID alias_spec opt_where_clause { $$ = &deleteStatement{$2,$3,$4} }
