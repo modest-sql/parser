@@ -41,6 +41,12 @@ type columnDefinition struct {
 func (c *columnDefinition) convert() common.TableColumnDefiner {
 
 	switch v := c.dataType.(type) {
+	case *booleanType:
+		return common.NewBooleanTableColumn(c.identifier, c.defaultValue(), c.nullable(), c.autoincrementable())
+	case *integerType:
+		return common.NewIntegerTableColumn(c.identifier, c.defaultValue(), c.nullable(), c.autoincrementable())
+	case *floatType:
+		return common.NewFloatTableColumn(c.identifier, c.defaultValue(), c.nullable(), c.autoincrementable())
 	case *charType:
 		return common.NewCharTableColumn(c.identifier, c.defaultValue(), c.nullable(), c.autoincrementable(), v.length)
 	}
