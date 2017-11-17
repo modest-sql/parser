@@ -64,7 +64,13 @@ type insertStatement struct {
 }
 
 func (s *insertStatement) convert() interface{} {
-	return nil
+	values := map[string]interface{}{}
+
+	for i, columnName := range s.columnNames {
+		values[columnName] = s.values[i]
+	}
+
+	return common.NewInsertCommand(s.table, values)
 }
 
 func (s *insertStatement) execute() error {
@@ -114,7 +120,7 @@ type selectStatement struct {
 }
 
 func (s *selectStatement) convert() interface{} {
-	return nil
+	return common.NewSelectTableCommand(s.table)
 }
 
 func (s *selectStatement) execute() error {
