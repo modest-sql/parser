@@ -7628,12 +7628,12 @@ OUTER0:
 			}
 		case 3:
 			{
-				lval.int_t, _ = strconv.Atoi(yylex.Text())
+				lval.int32_t, _ = strconv.ParseInt(yylex.Text(), 10, 32).(int32)
 				return INT_LIT
 			}
 		case 4:
 			{
-				lval.float_t, _ = strconv.ParseFloat(yylex.Text(), 64)
+				lval.float_t, _ = strconv.ParseFloat(yylex.Text(), 32).(float32)
 				return FLOAT_LIT
 			}
 		case 5:

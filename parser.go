@@ -12,10 +12,10 @@ var statements statementList
 
 //line parser.y:13
 type yySymType struct {
-	yys      int
-	int_t    int
-	string_t string
-	float_t  float64
+	yys       int
+	int32_t   int32
+	string_t  string
+	float32_t float32
 
 	expr_t expression
 
@@ -805,7 +805,7 @@ yydefault:
 		yyDollar = yyS[yypt-4 : yypt+1]
 		//line parser.y:111
 		{
-			yyVAL.data_t = &charType{yyDollar[3].int_t}
+			yyVAL.data_t = &charType{yyDollar[3].int32_t.(int)}
 		}
 	case 22:
 		yyDollar = yyS[yypt-1 : yypt+1]
@@ -990,7 +990,7 @@ yydefault:
 		yyDollar = yyS[yypt-1 : yypt+1]
 		//line parser.y:171
 		{
-			yyVAL.obj_t = yyDollar[1].int_t
+			yyVAL.obj_t = yyDollar[1].int32_t
 		}
 	case 52:
 		yyDollar = yyS[yypt-4 : yypt+1]
@@ -1159,7 +1159,7 @@ yydefault:
 		yyDollar = yyS[yypt-3 : yypt+1]
 		//line parser.y:225
 		{
-			yyVAL.expr_t = &betweenExpression{&intExpression{yyDollar[1].int_t}, &intExpression{yyDollar[3].int_t}}
+			yyVAL.expr_t = &betweenExpression{&intExpression{yyDollar[1].int32_t}, &intExpression{yyDollar[3].int32_t}}
 		}
 	case 80:
 		yyDollar = yyS[yypt-3 : yypt+1]
@@ -1201,7 +1201,7 @@ yydefault:
 		yyDollar = yyS[yypt-1 : yypt+1]
 		//line parser.y:238
 		{
-			yyVAL.expr_t = &intExpression{yyDollar[1].int_t}
+			yyVAL.expr_t = &intExpression{yyDollar[1].int32_t}
 		}
 	case 87:
 		yyDollar = yyS[yypt-1 : yypt+1]

@@ -2,8 +2,8 @@
 /--[^\n]*/      { /* Single line comment */ }
 /\/\*[^*]*\*\// { /* Multi line comment */ }
 
-/-?[0-9]+/	        { lval.int_t, _ = strconv.Atoi(yylex.Text()); return INT_LIT }
-/-?[0-9]+\.[0-9]*|-?\.[0-9]+|-?[0-9]+[Ee][-+]?[0-9]+|-?[0-9]+\.[0-9]*[Ee][-+]?[0-9]+|-?\.[0-9]*[Ee][-+]?[0-9]+/ { lval.float_t, _ = strconv.ParseFloat(yylex.Text(), 64); return FLOAT_LIT }
+/-?[0-9]+/	        { lval.int32_t, _ = strconv.ParseInt(yylex.Text(), 10, 32).(int32); return INT_LIT }
+/-?[0-9]+\.[0-9]*|-?\.[0-9]+|-?[0-9]+[Ee][-+]?[0-9]+|-?[0-9]+\.[0-9]*[Ee][-+]?[0-9]+|-?\.[0-9]*[Ee][-+]?[0-9]+/ { lval.float_t, _ = strconv.ParseFloat(yylex.Text(), 32).(float32); return FLOAT_LIT }
 
 
 /\+/        { return TK_PLUS }
