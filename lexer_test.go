@@ -89,8 +89,8 @@ func TestLexer(t *testing.T) {
 	tokenCount := 0
 	expectedTokenCount := 65
 
-	var integers []int32
-	var floats []float32
+	var integers []int64
+	var floats []float64
 	var strings []string
 	var identifiers []string
 	var keywords []int
@@ -101,9 +101,9 @@ func TestLexer(t *testing.T) {
 		tokenCount++
 
 		if token == INT_LIT {
-			integers = append(integers, lval.int32_t)
+			integers = append(integers, lval.int64_t)
 		} else if token == FLOAT_LIT {
-			floats = append(floats, lval.float32_t)
+			floats = append(floats, lval.float64_t)
 		} else if token == STR_LIT {
 			strings = append(strings, lval.string_t)
 		} else if token == TK_ID {
@@ -124,7 +124,7 @@ func TestLexer(t *testing.T) {
 	}
 
 	t.Run("TestIntegerLiterals", func(t *testing.T) {
-		expectedValue := int32(27819)
+		expectedValue := int64(27819)
 		expectedIntCount := 1
 		intCount := len(integers)
 
@@ -138,7 +138,7 @@ func TestLexer(t *testing.T) {
 	})
 
 	t.Run("TestFloatLiterals", func(t *testing.T) {
-		expectedValue := float32(3.1416)
+		expectedValue := float64(3.1416)
 		expectedFloatCount := 1
 		floatCount := len(floats)
 

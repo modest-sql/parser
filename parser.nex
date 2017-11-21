@@ -2,8 +2,8 @@
 /--[^\n]*/      { /* Single line comment */ }
 /\/\*[^*]*\*\// { /* Multi line comment */ }
 
-/-?[0-9]+/	{ n, err := strconv.ParseInt(yylex.Text(), 10, 32); if err != nil { yylex.Error(err.Error()) }; lval.int32_t = int32(n); return INT_LIT }
-/-?[0-9]+\.[0-9]*|-?\.[0-9]+|-?[0-9]+[Ee][-+]?[0-9]+|-?[0-9]+\.[0-9]*[Ee][-+]?[0-9]+|-?\.[0-9]*[Ee][-+]?[0-9]+/ { n, err := strconv.ParseFloat(yylex.Text(), 32); if err != nil { yylex.Error(err.Error()) }; lval.float32_t = float32(n); return FLOAT_LIT }
+/-?[0-9]+/	{ n, err := strconv.ParseInt(yylex.Text(), 10, 64); if err != nil { yylex.Error(err.Error()) }; lval.int64_t = n; return INT_LIT }
+/-?[0-9]+\.[0-9]*|-?\.[0-9]+|-?[0-9]+[Ee][-+]?[0-9]+|-?[0-9]+\.[0-9]*[Ee][-+]?[0-9]+|-?\.[0-9]*[Ee][-+]?[0-9]+/ { n, err := strconv.ParseFloat(yylex.Text(), 64); if err != nil { yylex.Error(err.Error()) }; lval.float64_t = n; return FLOAT_LIT }
 
 
 /\+/        { return TK_PLUS }

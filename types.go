@@ -1,11 +1,11 @@
 package parser
 
 const (
-	booleanSize = 1
-	charSize    = 1
-	integerSize = 4
-	floatSize   = 4
-	datetimeSize = 4
+	booleanSize  = 1
+	charSize     = 1
+	integerSize  = 8
+	floatSize    = 8
+	datetimeSize = 8
 )
 
 type dataType interface {
@@ -20,7 +20,7 @@ func (t *booleanType) size() int {
 }
 
 type charType struct {
-	length int32
+	length int64
 }
 
 func (t *charType) size() int {

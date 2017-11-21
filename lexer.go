@@ -7628,20 +7628,20 @@ OUTER0:
 			}
 		case 3:
 			{
-				n, err := strconv.ParseInt(yylex.Text(), 10, 32)
+				n, err := strconv.ParseInt(yylex.Text(), 10, 64)
 				if err != nil {
 					yylex.Error(err.Error())
 				}
-				lval.int32_t = int32(n)
+				lval.int64_t = n
 				return INT_LIT
 			}
 		case 4:
 			{
-				n, err := strconv.ParseFloat(yylex.Text(), 32)
+				n, err := strconv.ParseFloat(yylex.Text(), 64)
 				if err != nil {
 					yylex.Error(err.Error())
 				}
-				lval.float32_t = float32(n)
+				lval.float64_t = n
 				return FLOAT_LIT
 			}
 		case 5:

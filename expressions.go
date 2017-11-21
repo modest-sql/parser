@@ -9,7 +9,7 @@ type idExpression struct {
 }
 
 type intExpression struct {
-	value int32
+	value int64
 }
 
 type boolExpression struct {
@@ -17,7 +17,7 @@ type boolExpression struct {
 }
 
 type floatExpression struct {
-	value float32
+	value float64
 }
 
 type stringExpression struct {
