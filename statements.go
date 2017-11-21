@@ -107,12 +107,20 @@ type columnSpec struct {
 }
 
 type selectStatement struct {
-	table           string
-	alias           string
+	table string /* discouraged, use mainTable from source instead. Will disappear */
+	alias string /* discoraged, use mainAlias from source instead. Will disappear */
+	mainTable string
+	mainAlias string
+	joinList []joinSpec
 	selectColumns   []columnSpec
 	whereExpression expression
 }
 
+type joinSpec struct {
+	targetTable string
+	targetAlias string
+	filterCriteria expression
+}
 func (s *selectStatement) convert() interface{} {
 	return nil
 }
