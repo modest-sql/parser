@@ -11,9 +11,9 @@ var statements statementList
 %}
 
 %union {
-    int_t int
+    int64_t int64
     string_t string
-    float_t float64
+    float64_t float64
 
     expr_t expression
 
@@ -42,8 +42,8 @@ var statements statementList
 %token KW_NULL KW_IN KW_IS KW_AUTO_INCREMENT KW_JOIN KW_ON KW_GROUP KW_BY KW_DROP KW_DEFAULT
 %token KW_TRUE KW_FALSE KW_AS KW_ADD KW_COLUMN
 
-%token<int_t> INT_LIT
-%token<float_t> FLOAT_LIT
+%token<int64_t> INT_LIT
+%token<float64_t> FLOAT_LIT
 %token<string_t> TK_ID STR_LIT
 %type<string_t> multipart_id_suffix alias_spec
 

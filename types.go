@@ -1,10 +1,10 @@
 package parser
 
 const (
-	booleanSize = 1
-	charSize    = 1
-	integerSize = 4
-	floatSize   = 8
+	booleanSize  = 1
+	charSize     = 1
+	integerSize  = 8
+	floatSize    = 8
 	datetimeSize = 8
 )
 
@@ -20,11 +20,11 @@ func (t *booleanType) size() int {
 }
 
 type charType struct {
-	length int
+	length int64
 }
 
 func (t *charType) size() int {
-	return t.length * charSize
+	return int(t.length) * charSize
 }
 
 type integerType struct {

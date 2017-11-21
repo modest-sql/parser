@@ -89,7 +89,7 @@ func TestLexer(t *testing.T) {
 	tokenCount := 0
 	expectedTokenCount := 65
 
-	var integers []int
+	var integers []int64
 	var floats []float64
 	var strings []string
 	var identifiers []string
@@ -101,9 +101,9 @@ func TestLexer(t *testing.T) {
 		tokenCount++
 
 		if token == INT_LIT {
-			integers = append(integers, lval.int_t)
+			integers = append(integers, lval.int64_t)
 		} else if token == FLOAT_LIT {
-			floats = append(floats, lval.float_t)
+			floats = append(floats, lval.float64_t)
 		} else if token == STR_LIT {
 			strings = append(strings, lval.string_t)
 		} else if token == TK_ID {
@@ -124,7 +124,7 @@ func TestLexer(t *testing.T) {
 	}
 
 	t.Run("TestIntegerLiterals", func(t *testing.T) {
-		expectedValue := 27819
+		expectedValue := int64(27819)
 		expectedIntCount := 1
 		intCount := len(integers)
 
@@ -138,7 +138,7 @@ func TestLexer(t *testing.T) {
 	})
 
 	t.Run("TestFloatLiterals", func(t *testing.T) {
-		expectedValue := 3.1416
+		expectedValue := float64(3.1416)
 		expectedFloatCount := 1
 		floatCount := len(floats)
 
@@ -171,7 +171,7 @@ func TestLexer(t *testing.T) {
 	})
 
 	t.Run("TestIdentifiers", func(t *testing.T) {
-		expectedIdentifiers := []string{"movies", "movies", "title", "movies2"}
+		expectedIdentifiers := []string{"MOVIES", "MOVIES", "TITLE", "MOVIES2"}
 		expectedIdentifierCount := len(expectedIdentifiers)
 		identifierCount := len(identifiers)
 
