@@ -133,6 +133,8 @@ alter_statement: KW_ALTER KW_TABLE TK_ID alter_instruction { $$ = &alterStatemen
 alter_instruction: KW_DROP KW_COLUMN TK_ID {$$ = &alterDrop{ $3 } }
     | KW_ADD TK_ID data_type column_constraint_list { $$ = &alterAdd{ $2,$3,$4} }
     | KW_ADD TK_ID data_type { $$ = &alterAdd{ $2,$3, nil} }
+    | KW_ADD KW_COLUMN TK_ID data_type column_constraint_list { $$ = &alterAdd{ $3,$4,$5} }
+    | KW_ADD KW_COLUMN TK_ID data_type { $$ = &alterAdd{ $3,$4, nil} }
     | KW_ALTER KW_COLUMN TK_ID data_type { $$ = &alterModify{ $3,$4, nil} }
     | KW_ALTER KW_COLUMN TK_ID data_type column_constraint_list { $$ = &alterModify{ $3,$4, $5} }
 ;
