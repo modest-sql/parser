@@ -148,3 +148,9 @@ type alterAdd struct {
 	dataType          dataType
 	columnConstraints []interface{}
 }
+
+type alterModify struct {
+	table string
+	dataType dataType
+	columnConstraints []interface{}
+}
