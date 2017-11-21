@@ -9,4 +9,4 @@ SELECT
 FROM SomeTable AS t
 INNER JOIN AnotherTable a
     ON a.Id = t.Id
-WHERE a.Id > 5
+WHERE a.Id > 5;
