@@ -1,0 +1,2 @@
+ALTER TABLE factura
+ALTER COLUMN fecha FLOAT
