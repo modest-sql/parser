@@ -7628,12 +7628,20 @@ OUTER0:
 			}
 		case 3:
 			{
-				lval.int_t, _ = strconv.Atoi(yylex.Text())
+				n, err := strconv.ParseInt(yylex.Text(), 10, 64)
+				if err != nil {
+					yylex.Error(err.Error())
+				}
+				lval.int64_t = n
 				return INT_LIT
 			}
 		case 4:
 			{
-				lval.float_t, _ = strconv.ParseFloat(yylex.Text(), 64)
+				n, err := strconv.ParseFloat(yylex.Text(), 64)
+				if err != nil {
+					yylex.Error(err.Error())
+				}
+				lval.float64_t = n
 				return FLOAT_LIT
 			}
 		case 5:
@@ -7884,32 +7892,20 @@ OUTER0:
 			}
 		case 66:
 			{
-				lval.string_t = strings.ToLower(yylex.Text())
+				lval.string_t = strings.ToUpper(yylex.Text())
 				return TK_ID
 			}
 		case 67:
 			{
-				panic(Error{
-					line:    yylex.Line() + 1,
-					column:  yylex.Column() + 1,
-					message: fmt.Sprintf("syntax error: unterminated string literal"),
-				})
+				yylex.Error(fmt.Sprintf("syntax error: unterminated string literal"))
 			}
 		case 68:
 			{
-				panic(Error{
-					line:    yylex.Line() + 1,
-					column:  yylex.Column() + 1,
-					message: fmt.Sprintf("syntax error: unterminated string literal"),
-				})
+				yylex.Error(fmt.Sprintf("syntax error: unterminated string literal"))
 			}
 		case 69:
 			{
-				panic(Error{
-					line:    yylex.Line() + 1,
-					column:  yylex.Column() + 1,
-					message: fmt.Sprintf("syntax error: unexpected token '%s'", yylex.Text()),
-				})
+				yylex.Error(fmt.Sprintf("syntax error: unexpected token '%s'", yylex.Text()))
 			}
 		default:
 			break OUTER0

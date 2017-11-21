@@ -1,9 +1,9 @@
-//line parser.y:3
+//line parser.y:4
 package parser
 
 import __yyfmt__ "fmt"
 
-//line parser.y:5
+//line parser.y:4
 import "io"
 
 /*import "github.com/modest-sql/common"*/
@@ -12,10 +12,10 @@ var statements statementList
 
 //line parser.y:13
 type yySymType struct {
-	yys      int
-	int_t    int
-	string_t string
-	float_t  float64
+	yys       int
+	int64_t   int64
+	string_t  string
+	float64_t float64
 
 	expr_t expression
 
@@ -809,7 +809,7 @@ yydefault:
 		yyDollar = yyS[yypt-4 : yypt+1]
 		//line parser.y:111
 		{
-			yyVAL.data_t = &charType{yyDollar[3].int_t}
+			yyVAL.data_t = &charType{yyDollar[3].int64_t}
 		}
 	case 22:
 		yyDollar = yyS[yypt-1 : yypt+1]
@@ -1012,7 +1012,7 @@ yydefault:
 		yyDollar = yyS[yypt-1 : yypt+1]
 		//line parser.y:174
 		{
-			yyVAL.obj_t = yyDollar[1].int_t
+			yyVAL.obj_t = yyDollar[1].int64_t
 		}
 	case 55:
 		yyDollar = yyS[yypt-4 : yypt+1]
@@ -1181,7 +1181,7 @@ yydefault:
 		yyDollar = yyS[yypt-3 : yypt+1]
 		//line parser.y:228
 		{
-			yyVAL.expr_t = &betweenExpression{&intExpression{yyDollar[1].int_t}, &intExpression{yyDollar[3].int_t}}
+			yyVAL.expr_t = &betweenExpression{&intExpression{yyDollar[1].int64_t}, &intExpression{yyDollar[3].int64_t}}
 		}
 	case 83:
 		yyDollar = yyS[yypt-3 : yypt+1]
@@ -1223,7 +1223,7 @@ yydefault:
 		yyDollar = yyS[yypt-1 : yypt+1]
 		//line parser.y:241
 		{
-			yyVAL.expr_t = &intExpression{yyDollar[1].int_t}
+			yyVAL.expr_t = &intExpression{yyDollar[1].int64_t}
 		}
 	case 90:
 		yyDollar = yyS[yypt-1 : yypt+1]
