@@ -1,0 +1,2 @@
+ALTER TABLE factura
+DROP COLUMN fecha
