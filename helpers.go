@@ -48,7 +48,7 @@ func (c *columnDefinition) convert() common.TableColumnDefiner {
 	case *floatType:
 		return common.NewFloatTableColumn(c.identifier, c.defaultValue(), c.nullable(), c.autoincrementable())
 	case *charType:
-		return common.NewCharTableColumn(c.identifier, c.defaultValue(), c.nullable(), c.autoincrementable(), v.length)
+		return common.NewCharTableColumn(c.identifier, c.defaultValue(), c.nullable(), c.autoincrementable(), uint32(v.length))
 	}
 
 	return nil

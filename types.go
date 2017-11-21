@@ -19,11 +19,11 @@ func (t *booleanType) size() int {
 }
 
 type charType struct {
-	length int
+	length int32
 }
 
 func (t *charType) size() int {
-	return t.length * charSize
+	return int(t.length) * charSize
 }
 
 type integerType struct {

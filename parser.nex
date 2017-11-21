@@ -2,8 +2,8 @@
 /--[^\n]*/      { /* Single line comment */ }
 /\/\*[^*]*\*\// { /* Multi line comment */ }
 
-/-?[0-9]+/	        { lval.int32_t, _ = strconv.ParseInt(yylex.Text(), 10, 32).(int32); return INT_LIT }
-/-?[0-9]+\.[0-9]*|-?\.[0-9]+|-?[0-9]+[Ee][-+]?[0-9]+|-?[0-9]+\.[0-9]*[Ee][-+]?[0-9]+|-?\.[0-9]*[Ee][-+]?[0-9]+/ { lval.float_t, _ = strconv.ParseFloat(yylex.Text(), 32).(float32); return FLOAT_LIT }
+/-?[0-9]+/	{ n, err := strconv.ParseInt(yylex.Text(), 10, 32); if err != nil { yylex.Error(err.Error()) }; lval.int32_t = int32(n); return INT_LIT }
+/-?[0-9]+\.[0-9]*|-?\.[0-9]+|-?[0-9]+[Ee][-+]?[0-9]+|-?[0-9]+\.[0-9]*[Ee][-+]?[0-9]+|-?\.[0-9]*[Ee][-+]?[0-9]+/ { n, err := strconv.ParseFloat(yylex.Text(), 32); if err != nil { yylex.Error(err.Error()) }; lval.float32_t = float32(n); return FLOAT_LIT }
 
 
 /\+/        { return TK_PLUS }
@@ -72,29 +72,11 @@
 
 /[a-zA-Z][a-zA-Z0-9_]*/         { lval.string_t = strings.ToLower(yylex.Text()); return TK_ID }
 
-/'(\\.|[^'])*$/	                { 
-                                    panic(Error{
-                                            line: yylex.Line() + 1,
-                                            column: yylex.Column() + 1,
-                                            message: fmt.Sprintf("syntax error: unterminated string literal"),
-                                        })
-                                }
+/'(\\.|[^'])*$/	                { yylex.Error(fmt.Sprintf("syntax error: unterminated string literal")) }
 
-/\"(\\.|[^"])*$/                { 
-                                    panic(Error{
-                                            line: yylex.Line() + 1,
-                                            column: yylex.Column() + 1,
-                                            message: fmt.Sprintf("syntax error: unterminated string literal"),
-                                        })
-                                }
+/\"(\\.|[^"])*$/                { yylex.Error(fmt.Sprintf("syntax error: unterminated string literal")) }
 
-/./                             { 
-                                    panic(Error{
-                                            line: yylex.Line() + 1,
-                                            column: yylex.Column() + 1,
-                                            message: fmt.Sprintf("syntax error: unexpected token '%s'", yylex.Text()),
-                                        })
-                                }
+/./                             { yylex.Error(fmt.Sprintf("syntax error: unexpected token '%s'", yylex.Text())) }
 //
 
 package parser

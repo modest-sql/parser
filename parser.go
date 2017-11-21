@@ -805,7 +805,7 @@ yydefault:
 		yyDollar = yyS[yypt-4 : yypt+1]
 		//line parser.y:111
 		{
-			yyVAL.data_t = &charType{yyDollar[3].int32_t.(int)}
+			yyVAL.data_t = &charType{yyDollar[3].int32_t}
 		}
 	case 22:
 		yyDollar = yyS[yypt-1 : yypt+1]

@@ -9,7 +9,7 @@ type idExpression struct {
 }
 
 type intExpression struct {
-	value int
+	value int32
 }
 
 type boolExpression struct {
@@ -17,7 +17,7 @@ type boolExpression struct {
 }
 
 type floatExpression struct {
-	value float64
+	value float32
 }
 
 type stringExpression struct {
@@ -82,7 +82,7 @@ type likeExpression struct {
 	leftValue  expression
 }
 
-	type notExpression struct {
+type notExpression struct {
 	not expression
 }
 type andExpression struct {
