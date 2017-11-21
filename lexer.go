@@ -7892,7 +7892,7 @@ OUTER0:
 			}
 		case 66:
 			{
-				lval.string_t = strings.ToLower(yylex.Text())
+				lval.string_t = strings.ToUpper(yylex.Text())
 				return TK_ID
 			}
 		case 67:

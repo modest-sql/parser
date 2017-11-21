@@ -70,7 +70,7 @@
 /'[^']*'/                       { lval.string_t = strings.Replace(yylex.Text(), "'", "", -1);  return STR_LIT }
 /"[^"]*"/                       { lval.string_t = strings.Replace(yylex.Text(), "\"", "", -1);  return STR_LIT }
 
-/[a-zA-Z][a-zA-Z0-9_]*/         { lval.string_t = strings.ToLower(yylex.Text()); return TK_ID }
+/[a-zA-Z][a-zA-Z0-9_]*/         { lval.string_t = strings.ToUpper(yylex.Text()); return TK_ID }
 
 /'(\\.|[^'])*$/	                { yylex.Error(fmt.Sprintf("syntax error: unterminated string literal")) }
 
