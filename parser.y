@@ -43,7 +43,7 @@ var statements statementList
 %token KW_TRUE KW_FALSE KW_AS KW_ADD KW_COLUMN
 
 %token<int64_t> INT_LIT
-%token<float32_t> FLOAT_LIT
+%token<float64_t> FLOAT_LIT
 %token<string_t> TK_ID STR_LIT
 %type<string_t> multipart_id_suffix alias_spec
 
