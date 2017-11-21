@@ -1,0 +1,2 @@
+ALTER TABLE factura
+ADD fecha DATETIME
