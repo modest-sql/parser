@@ -1,3 +1,5 @@
 .vscode/
 *.output
 parser
+lexer.go
+parser.go
