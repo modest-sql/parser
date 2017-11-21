@@ -110,6 +110,9 @@ column_definition: TK_ID data_type column_constraint_list { $$ = &columnDefiniti
 
 data_type: KW_CHAR TK_LEFT_PAR INT_LIT TK_RIGHT_PAR { $$ = &charType{$3} }
     | KW_INTEGER { $$ = &integerType{} }
+    | KW_BOOLEAN { $$ = &booleanType{} }
+    | KW_DATETIME { $$ = &datetimeType{} }
+    | KW_FLOAT { $$ = &floatType{} }
 ;
 
 column_constraint_list: column_constraint_list column_constraint { $$ = $1; $$ = append($$, $2) }
