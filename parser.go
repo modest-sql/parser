@@ -1,9 +1,9 @@
-//line parser.y:3
+//line parser.y:4
 package parser
 
 import __yyfmt__ "fmt"
 
-//line parser.y:5
+//line parser.y:4
 import "io"
 
 /*import "github.com/modest-sql/common"*/
@@ -1280,7 +1280,7 @@ yydefault:
 		yyDollar = yyS[yypt-2 : yypt+1]
 		//line parser.y:250
 		{
-			yyVAL.expr_t = idExpression{yyDollar[1].string_t, yyDollar[2].string_t}
+			yyVAL.expr_t = &idExpression{yyDollar[1].string_t, yyDollar[2].string_t}
 		}
 	case 99:
 		yyDollar = yyS[yypt-3 : yypt+1]

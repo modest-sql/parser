@@ -247,7 +247,7 @@ addi_factor: INT_LIT { $$ = &intExpression{ $1 } }
     | truth_value { $$ = $1 }
     | STR_LIT { $$ = &stringExpression{ $1 } }
     | TK_ID { $$ = &idExpression{ $1 , "" } }
-    | TK_ID multipart_id_suffix { $$ = idExpression{ $1 , $2 }  }
+    | TK_ID multipart_id_suffix { $$ = &idExpression{ $1 , $2 }  }
     | TK_LEFT_PAR relational_expression TK_RIGHT_PAR { $$ = $2 }
 ;
 

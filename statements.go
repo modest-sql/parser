@@ -50,7 +50,7 @@ type dropStatement struct {
 }
 
 func (s *dropStatement) convert() interface{} {
-	return nil
+	return common.NewDropCommand(s.identifier)
 }
 
 func (s *dropStatement) execute() error {
@@ -65,7 +65,9 @@ type insertStatement struct {
 
 func (s *insertStatement) convert() interface{} {
 	values := map[string]interface{}{}
-
+	if len(s.columnNames) != len(s.values) {
+		panic(true)
+	}
 	for i, columnName := range s.columnNames {
 		values[columnName] = s.values[i]
 	}
@@ -133,9 +135,16 @@ type alterStatement struct {
 }
 
 func (s *alterStatement) convert() interface{} {
-	return nil
+	switch v := s.instruction.(type) {
+	case *alterDrop:
+		return common.NewAlterCommand(s.table, v.convert())
+	case *alterAdd:
+		return common.NewAlterCommand(s.table, v.convert())
+	case *alterModify:
+		return common.NewAlterCommand(s.table, v.convert())
+	}
+	return common.NewAlterCommand(s.table, nil)
 }
-
 func (s *alterStatement) execute() error {
 	return nil
 }
@@ -143,14 +152,38 @@ func (s *alterStatement) execute() error {
 type alterDrop struct {
 	table string
 }
+
+func (s *alterDrop) convert() interface{} {
+	return common.NewAlterDropInst(s.table)
+}
+func (s *alterDrop) execute() error {
+	return nil
+}
+
 type alterAdd struct {
 	table             string
 	dataType          dataType
 	columnConstraints []interface{}
 }
 
+func (s *alterAdd) convert() interface{} {
+	column := columnDefinition{s.table, s.dataType, s.columnConstraints}
+	return common.NewAlterAddInst(column.convert())
+}
+func (s *alterAdd) execute() error {
+	return nil
+}
+
 type alterModify struct {
-	table string
-	dataType dataType
+	table             string
+	dataType          dataType
 	columnConstraints []interface{}
+}
+
+func (s *alterModify) convert() interface{} {
+	column := columnDefinition{s.table, s.dataType, s.columnConstraints}
+	return common.NewAlterModifyInst(column.convert())
+}
+func (s *alterModify) execute() error {
+	return nil
 }
