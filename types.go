@@ -4,8 +4,8 @@ const (
 	booleanSize = 1
 	charSize    = 1
 	integerSize = 4
-	floatSize   = 8
-	datetimeSize = 8
+	floatSize   = 4
+	datetimeSize = 4
 )
 
 type dataType interface {
