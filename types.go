@@ -4,7 +4,8 @@ const (
 	booleanSize = 1
 	charSize    = 1
 	integerSize = 4
-	floatSize   = 8
+	floatSize   = 4
+	datetimeSize = 4
 )
 
 type dataType interface {
@@ -38,4 +39,11 @@ type floatType struct {
 
 func (t *floatType) size() int {
 	return floatSize
+}
+
+type datetimeType struct {
+}
+
+func (t *datetimeType) size() int {
+	return datetimeSize
 }
