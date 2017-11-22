@@ -21,6 +21,8 @@ var statements statementList
     stmt_t statement
     columnSpec_t columnSpec
     columnSpec_list_t []columnSpec
+    joinSpec_list_t []joinSpec
+    joinSpec_t joinSpec
     col_list_t columnDefinitions
     col_t *columnDefinition
     assignment_t assignment
@@ -67,6 +69,8 @@ var statements statementList
 %type<string_list_t>column_names_list 
 %type<columnSpec_t>select_col
 %type<columnSpec_list_t>select_col_list 
+%type<joinSpec_list_t> opt_joins_list join_list
+%type<joinSpec_t> inner_join
 
 %%
 
@@ -142,8 +146,8 @@ alter_instruction: KW_DROP KW_COLUMN TK_ID {$$ = &alterDrop{ $3 } }
 drop_statement: KW_DROP KW_TABLE TK_ID { $$ = &dropStatement{ $3 } }
 ;
 
-select_statement: KW_SELECT select_col_list KW_FROM TK_ID alias_spec opt_where_clause { $$ = &selectStatement{$4,$5,$2,$6} }
-    | KW_SELECT select_col_list KW_FROM TK_ID opt_where_clause { $$ = &selectStatement{$4,"",$2,$5} }
+select_statement: KW_SELECT select_col_list KW_FROM TK_ID alias_spec opt_joins_list opt_where_clause { $$ = &selectStatement{$2,$4,$5,$6, $7} }
+    | KW_SELECT select_col_list KW_FROM TK_ID opt_where_clause { $$ = &selectStatement{$2,$4,"", nil, $5} }
 ;
 
 select_col_list: select_col_list TK_COMMA select_col { $$ = $1 ; $$ = append($$,$3) }
@@ -177,6 +181,18 @@ values_list: values_list TK_COMMA value_literal { $$ = $1; $$ = append($$,$3)}
 
 value_literal: STR_LIT { $$ = $1 }
     | INT_LIT { $$ = $1 }
+;
+
+opt_joins_list: join_list { $$ = $1 }
+    | { $$ = nil }
+;
+
+join_list: join_list inner_join { $$ = $1; $$ = append($$, $2); }
+    | inner_join { $$ = append($$, $1) }
+;
+
+inner_join: KW_INNER KW_JOIN TK_ID alias_spec KW_ON search_condition { $$ = joinSpec{ $3, $4, $6 } }
+    | KW_INNER KW_JOIN TK_ID KW_ON search_condition { $$ = joinSpec{ $3, "", $5 } }
 ;
 
 delete_statement: KW_DELETE TK_ID alias_spec opt_where_clause { $$ = &deleteStatement{$2,$3,$4} }

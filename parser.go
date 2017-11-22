@@ -23,6 +23,8 @@ type yySymType struct {
 	stmt_t            statement
 	columnSpec_t      columnSpec
 	columnSpec_list_t []columnSpec
+	joinSpec_list_t   []joinSpec
+	joinSpec_t        joinSpec
 	col_list_t        columnDefinitions
 	col_t             *columnDefinition
 	assignment_t      assignment
@@ -172,7 +174,7 @@ const yyEofCode = 1
 const yyErrCode = 2
 const yyInitialStackSize = 16
 
-//line parser.y:262
+//line parser.y:278
 
 func init() {
 	yyErrorVerbose = true
@@ -207,74 +209,77 @@ var yyExca = [...]int{
 
 const yyPrivate = 57344
 
-const yyLast = 203
+const yyLast = 217
 
 var yyAct = [...]int{
 
-	166, 151, 161, 106, 62, 150, 75, 64, 136, 42,
-	61, 69, 36, 63, 59, 43, 58, 168, 60, 111,
-	167, 39, 110, 69, 37, 24, 108, 147, 145, 38,
-	144, 142, 76, 85, 53, 52, 49, 48, 47, 46,
-	40, 28, 37, 27, 169, 72, 163, 38, 126, 112,
-	109, 55, 146, 153, 73, 70, 71, 72, 81, 83,
-	65, 165, 68, 67, 37, 45, 43, 70, 71, 38,
-	34, 88, 65, 26, 68, 67, 31, 79, 30, 23,
-	102, 101, 80, 155, 25, 29, 148, 87, 33, 154,
-	86, 32, 113, 21, 118, 119, 120, 121, 122, 123,
-	124, 35, 117, 116, 177, 178, 172, 129, 130, 133,
-	132, 127, 128, 17, 50, 15, 14, 39, 13, 143,
-	103, 16, 175, 18, 138, 141, 137, 139, 140, 41,
-	89, 90, 93, 92, 91, 94, 104, 131, 51, 149,
-	134, 135, 19, 114, 115, 162, 156, 77, 54, 157,
-	1, 82, 164, 158, 159, 99, 100, 97, 98, 164,
-	22, 96, 95, 174, 170, 171, 89, 90, 93, 92,
-	91, 94, 164, 164, 3, 176, 84, 20, 56, 179,
-	57, 125, 66, 44, 74, 78, 152, 160, 173, 107,
-	105, 9, 8, 7, 6, 12, 11, 96, 95, 10,
-	5, 4, 2,
+	173, 56, 157, 168, 35, 106, 42, 156, 139, 115,
+	62, 64, 75, 69, 61, 63, 36, 180, 43, 59,
+	60, 58, 37, 175, 37, 69, 174, 38, 111, 38,
+	39, 110, 41, 24, 166, 108, 153, 148, 147, 145,
+	76, 51, 85, 53, 52, 37, 49, 72, 55, 48,
+	38, 73, 47, 46, 82, 40, 83, 70, 71, 72,
+	28, 27, 65, 176, 68, 67, 170, 129, 112, 70,
+	71, 81, 109, 37, 65, 88, 68, 67, 38, 185,
+	151, 172, 116, 152, 102, 101, 45, 23, 43, 26,
+	79, 159, 25, 31, 30, 80, 29, 154, 87, 34,
+	121, 122, 123, 124, 125, 126, 127, 120, 119, 86,
+	32, 132, 133, 130, 131, 136, 135, 33, 21, 146,
+	149, 161, 50, 17, 150, 15, 14, 160, 13, 188,
+	189, 16, 39, 18, 137, 138, 89, 90, 93, 92,
+	91, 94, 181, 134, 155, 89, 90, 93, 92, 91,
+	94, 103, 19, 169, 163, 184, 164, 165, 162, 171,
+	141, 144, 140, 142, 143, 77, 171, 96, 95, 54,
+	183, 179, 177, 178, 117, 118, 96, 95, 104, 1,
+	171, 171, 186, 99, 100, 187, 114, 190, 97, 98,
+	191, 3, 113, 22, 20, 84, 57, 128, 66, 44,
+	74, 78, 158, 167, 182, 107, 105, 9, 8, 7,
+	6, 12, 11, 10, 5, 4, 2,
 }
 var yyPact = [...]int{
 
-	86, -1000, 86, 75, -1000, -1000, -1000, -1000, -1000, -1000,
-	-1000, -1000, -1000, 19, 42, -22, -24, 57, 50, 48,
-	73, -1000, 54, -1000, -1000, 4, -25, -18, 29, -26,
-	-27, -28, -1000, -29, 19, -1000, -36, -30, -1000, -31,
-	134, 33, -1000, -3, 33, -33, 133, 21, -1000, -18,
-	-1000, -1000, -1000, -1000, -32, -1000, -1000, 71, 67, -1000,
-	9, 158, 153, 149, -1000, -1000, -1000, -1000, 100, 9,
-	-1000, -1000, -1000, -1000, 104, -1000, 124, -39, -1000, -12,
-	-43, -13, 33, -1000, 128, -1000, -3, -3, 158, 9,
-	9, 9, 9, 9, 9, 9, -15, 9, 9, 9,
-	9, -1000, 122, -33, 9, 125, -1000, -1000, 102, -34,
-	102, -35, -37, -1000, 14, -38, 67, -1000, 153, 153,
-	153, 153, 153, 153, 153, -1000, 66, 149, 149, -1000,
-	-1000, -1000, -1000, 153, -1000, -39, 32, 132, -1000, -1000,
-	-1000, -1000, -1000, 32, 102, 102, 131, -1000, -17, -1000,
-	32, -1000, -1000, 13, -46, -1000, -19, 32, 32, 32,
-	90, -1000, -46, -1000, -1000, -1000, -1000, -1000, -1000, 107,
-	32, 32, 131, 89, -1000, -1000, -1000, -1000, -46, -1000,
+	96, -1000, 96, 100, -1000, -1000, -1000, -1000, -1000, -1000,
+	-1000, -1000, -1000, 27, 58, -4, -5, 68, 66, 65,
+	92, -1000, 83, -1000, -1000, 13, -10, -15, 50, -12,
+	-13, -16, -1000, -19, 27, -1000, -38, -21, -1000, -22,
+	155, 55, -1000, -1, 55, -25, 151, 34, -1000, -15,
+	-1000, -1000, -1000, -1000, -23, -1000, -1000, 90, 78, -1000,
+	11, 137, 184, 177, -1000, -1000, -1000, -1000, 115, 11,
+	-1000, -1000, -1000, -1000, 135, -1000, 166, -30, -1000, 10,
+	-34, 6, 41, -1000, 159, -1000, -1, -1, 137, 11,
+	11, 11, 11, 11, 11, 11, 4, 11, 11, 11,
+	11, -1000, 128, -25, 11, 119, -1000, -1000, 138, -26,
+	138, -27, -28, 55, 41, -1000, 28, 45, -29, 78,
+	-1000, 184, 184, 184, 184, 184, 184, 184, -1000, 77,
+	177, 177, -1000, -1000, -1000, -1000, 184, -1000, -30, 70,
+	144, -1000, -1000, -1000, -1000, -1000, 70, 138, 138, -1000,
+	-1000, -31, 139, -1000, 3, -1000, 70, -1000, -1000, 33,
+	-40, -1000, 0, 70, 70, 70, -36, 126, -1000, -40,
+	-1000, -1000, -1000, -1000, -1000, -1000, 140, 70, 70, 26,
+	-1, 139, 114, -1000, -1000, -1, -1000, -1000, -1000, -40,
+	-1000, -1000,
 }
 var yyPgo = [...]int{
 
-	0, 12, 101, 202, 174, 201, 200, 199, 196, 195,
-	194, 193, 192, 191, 190, 3, 189, 5, 188, 2,
-	187, 1, 186, 185, 8, 184, 183, 6, 0, 7,
-	13, 4, 182, 181, 10, 14, 16, 180, 9, 178,
-	176, 79, 160, 150,
+	0, 16, 4, 216, 191, 215, 214, 213, 212, 211,
+	210, 209, 208, 207, 206, 5, 205, 7, 204, 3,
+	203, 2, 202, 201, 8, 200, 199, 12, 0, 11,
+	15, 10, 198, 197, 14, 19, 21, 196, 6, 1,
+	195, 87, 193, 192, 186, 9, 179,
 }
 var yyR1 = [...]int{
 
-	0, 43, 43, 3, 3, 3, 4, 4, 6, 6,
+	0, 46, 46, 3, 3, 3, 4, 4, 6, 6,
 	6, 5, 5, 5, 5, 7, 14, 14, 15, 16,
 	16, 24, 24, 24, 24, 24, 17, 17, 21, 22,
 	22, 22, 8, 23, 23, 23, 23, 23, 23, 23,
 	9, 10, 10, 42, 42, 41, 41, 41, 41, 41,
 	11, 40, 40, 20, 20, 19, 18, 18, 28, 28,
-	12, 12, 2, 2, 38, 38, 39, 13, 26, 25,
-	25, 27, 37, 37, 36, 36, 35, 35, 34, 34,
-	34, 34, 34, 34, 34, 34, 34, 33, 31, 31,
-	31, 30, 30, 30, 29, 29, 29, 29, 29, 29,
-	1, 32, 32, 32,
+	43, 43, 44, 44, 45, 45, 12, 12, 2, 2,
+	38, 38, 39, 13, 26, 25, 25, 27, 37, 37,
+	36, 36, 35, 35, 34, 34, 34, 34, 34, 34,
+	34, 34, 34, 33, 31, 31, 31, 30, 30, 30,
+	29, 29, 29, 29, 29, 29, 1, 32, 32, 32,
 }
 var yyR2 = [...]int{
 
@@ -282,17 +287,17 @@ var yyR2 = [...]int{
 	1, 1, 1, 1, 1, 6, 3, 1, 1, 3,
 	2, 4, 1, 1, 1, 1, 2, 1, 1, 2,
 	2, 1, 4, 3, 4, 3, 5, 4, 4, 5,
-	3, 6, 5, 3, 1, 1, 2, 1, 3, 2,
+	3, 7, 5, 3, 1, 1, 2, 1, 3, 2,
 	8, 3, 1, 3, 1, 3, 3, 1, 1, 1,
-	4, 3, 2, 1, 2, 0, 1, 4, 2, 3,
-	1, 3, 3, 1, 3, 1, 2, 1, 3, 3,
-	3, 3, 3, 3, 3, 3, 1, 3, 3, 3,
-	1, 3, 3, 1, 1, 1, 1, 1, 2, 3,
-	2, 1, 1, 1,
+	1, 0, 2, 1, 6, 5, 4, 3, 2, 1,
+	2, 0, 1, 4, 2, 3, 1, 3, 3, 1,
+	3, 1, 2, 1, 3, 3, 3, 3, 3, 3,
+	3, 3, 1, 3, 3, 3, 1, 3, 3, 1,
+	1, 1, 1, 1, 2, 3, 2, 1, 1, 1,
 }
 var yyChk = [...]int{
 
-	-1000, -43, -3, -4, -5, -6, -10, -11, -12, -13,
+	-1000, -46, -3, -4, -5, -6, -10, -11, -12, -13,
 	-7, -8, -9, 32, 30, 29, 35, 27, 37, 56,
 	-4, 18, -42, -41, 6, 65, 31, 65, 65, 28,
 	28, 28, 18, 34, 16, -2, -1, 60, 65, 17,
@@ -303,34 +308,38 @@ var yyChk = [...]int{
 	61, 37, -2, -38, -40, 65, 19, 20, -34, 8,
 	9, 12, 11, 10, 13, 40, 39, 4, 5, 6,
 	7, -1, -34, 16, 12, -14, -15, -16, 65, 62,
-	65, 62, 62, -38, 15, 16, -36, -35, -31, -31,
-	-31, -31, -31, -31, -31, -33, 63, -30, -30, -29,
-	-29, 15, -27, -31, 15, 16, -24, 24, 22, 25,
-	26, 23, 65, -24, 65, 65, 38, 65, 20, -15,
-	-17, -21, -22, 21, 57, 51, 14, -17, -24, -24,
-	-20, -19, 14, 63, -21, 48, -28, 66, 63, 63,
-	-17, -17, 16, -18, -28, 15, -19, 15, 16, -28,
+	65, 62, 62, -43, -44, -45, 41, 15, 16, -36,
+	-35, -31, -31, -31, -31, -31, -31, -31, -33, 63,
+	-30, -30, -29, -29, 15, -27, -31, 15, 16, -24,
+	24, 22, 25, 26, 23, 65, -24, 65, 65, -38,
+	-45, 52, 38, 65, 20, -15, -17, -21, -22, 21,
+	57, 51, 14, -17, -24, -24, 65, -20, -19, 14,
+	63, -21, 48, -28, 66, 63, 63, -17, -17, -2,
+	53, 16, -18, -28, 15, 53, -39, -19, 15, 16,
+	-39, -28,
 }
 var yyDef = [...]int{
 
 	2, -2, 1, 5, 6, 7, 11, 12, 13, 14,
 	8, 9, 10, 0, 0, 0, 0, 0, 0, 0,
-	0, 4, 0, 44, 45, 47, 0, 65, 0, 0,
-	0, 0, 3, 0, 0, 46, 49, 0, 63, 0,
-	0, 65, 61, 0, 65, 0, 0, 0, 40, 65,
-	43, 48, 62, 100, 0, 60, 64, 66, 73, 75,
-	0, 77, 86, 90, 93, 94, 95, 96, 97, 0,
-	101, 102, 103, 67, 68, 70, 0, 0, 32, 0,
-	0, 0, 65, 42, 0, 52, 0, 0, 76, 0,
+	0, 4, 0, 44, 45, 47, 0, 71, 0, 0,
+	0, 0, 3, 0, 0, 46, 49, 0, 69, 0,
+	0, 71, 67, 0, 71, 0, 0, 0, 40, 71,
+	43, 48, 68, 106, 0, 66, 70, 72, 79, 81,
+	0, 83, 92, 96, 99, 100, 101, 102, 103, 0,
+	107, 108, 109, 73, 74, 76, 0, 0, 32, 0,
+	0, 0, 61, 42, 0, 52, 0, 0, 82, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 98, 0, 0, 0, 0, 17, 18, 0, 0,
-	0, 0, 0, 41, 0, 0, 72, 74, 78, 79,
-	80, 81, 82, 83, 84, 85, 0, 88, 89, 91,
-	92, 99, 69, 71, 15, 0, 20, 0, 22, 23,
-	24, 25, 33, 35, 0, 0, 0, 51, 0, 16,
-	19, 27, 28, 0, 0, 31, 0, 34, 37, 38,
-	50, 54, 0, 87, 26, 29, 30, 58, 59, 0,
-	36, 39, 0, 0, 57, 21, 53, 55, 0, 56,
+	0, 104, 0, 0, 0, 0, 17, 18, 0, 0,
+	0, 0, 0, 71, 60, 63, 0, 0, 0, 78,
+	80, 84, 85, 86, 87, 88, 89, 90, 91, 0,
+	94, 95, 97, 98, 105, 75, 77, 15, 0, 20,
+	0, 22, 23, 24, 25, 33, 35, 0, 0, 41,
+	62, 0, 0, 51, 0, 16, 19, 27, 28, 0,
+	0, 31, 0, 34, 37, 38, 0, 50, 54, 0,
+	93, 26, 29, 30, 58, 59, 0, 36, 39, 0,
+	0, 0, 0, 57, 21, 0, 65, 53, 55, 0,
+	64, 56,
 }
 var yyTok1 = [...]int{
 
@@ -689,626 +698,663 @@ yydefault:
 
 	case 1:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:73
+		//line parser.y:77
 		{
 			statements = yyDollar[1].stmt_list_t
 		}
 	case 2:
 		yyDollar = yyS[yypt-0 : yypt+1]
-		//line parser.y:74
+		//line parser.y:78
 		{
 		}
 	case 3:
 		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:77
+		//line parser.y:81
 		{
 			yyVAL.stmt_list_t = yyDollar[1].stmt_list_t
 			yyVAL.stmt_list_t = append(yyVAL.stmt_list_t, yyDollar[2].stmt_t)
 		}
 	case 4:
 		yyDollar = yyS[yypt-2 : yypt+1]
-		//line parser.y:78
+		//line parser.y:82
 		{
 			yyVAL.stmt_list_t = append(yyVAL.stmt_list_t, yyDollar[1].stmt_t)
 		}
 	case 5:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:79
+		//line parser.y:83
 		{
 			yyVAL.stmt_list_t = append(yyVAL.stmt_list_t, yyDollar[1].stmt_t)
 		}
 	case 6:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:82
+		//line parser.y:86
 		{
 			yyVAL.stmt_t = yyDollar[1].stmt_t
 		}
 	case 7:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:83
+		//line parser.y:87
 		{
 			yyVAL.stmt_t = yyDollar[1].stmt_t
 		}
 	case 8:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:86
+		//line parser.y:90
 		{
 			yyVAL.stmt_t = yyDollar[1].stmt_t
 		}
 	case 9:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:87
+		//line parser.y:91
 		{
 			yyVAL.stmt_t = yyDollar[1].stmt_t
 		}
 	case 10:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:88
+		//line parser.y:92
 		{
 			yyVAL.stmt_t = yyDollar[1].stmt_t
 		}
 	case 11:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:91
+		//line parser.y:95
 		{
 			yyVAL.stmt_t = yyDollar[1].stmt_t
 		}
 	case 12:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:92
+		//line parser.y:96
 		{
 			yyVAL.stmt_t = yyDollar[1].stmt_t
 		}
 	case 13:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:93
+		//line parser.y:97
 		{
 			yyVAL.stmt_t = yyDollar[1].stmt_t
 		}
 	case 14:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:94
+		//line parser.y:98
 		{
 			yyVAL.stmt_t = yyDollar[1].stmt_t
 		}
 	case 15:
 		yyDollar = yyS[yypt-6 : yypt+1]
-		//line parser.y:97
+		//line parser.y:101
 		{
 			yyVAL.stmt_t = &createStatement{yyDollar[3].string_t, yyDollar[5].col_list_t}
 		}
 	case 16:
 		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:100
+		//line parser.y:104
 		{
 			yyVAL.col_list_t = yyDollar[1].col_list_t
 			yyVAL.col_list_t = append(yyVAL.col_list_t, yyDollar[3].col_t)
 		}
 	case 17:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:101
+		//line parser.y:105
 		{
 			yyVAL.col_list_t = append(yyVAL.col_list_t, yyDollar[1].col_t)
 		}
 	case 18:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:104
+		//line parser.y:108
 		{
 			yyVAL.col_t = yyDollar[1].col_t
 		}
 	case 19:
 		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:107
+		//line parser.y:111
 		{
 			yyVAL.col_t = &columnDefinition{yyDollar[1].string_t, yyDollar[2].data_t, yyDollar[3].obj_list_t}
 		}
 	case 20:
 		yyDollar = yyS[yypt-2 : yypt+1]
-		//line parser.y:108
+		//line parser.y:112
 		{
 			yyVAL.col_t = &columnDefinition{yyDollar[1].string_t, yyDollar[2].data_t, nil}
 		}
 	case 21:
 		yyDollar = yyS[yypt-4 : yypt+1]
-		//line parser.y:111
+		//line parser.y:115
 		{
 			yyVAL.data_t = &charType{yyDollar[3].int64_t}
 		}
 	case 22:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:112
+		//line parser.y:116
 		{
 			yyVAL.data_t = &integerType{}
 		}
 	case 23:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:113
+		//line parser.y:117
 		{
 			yyVAL.data_t = &booleanType{}
 		}
 	case 24:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:114
+		//line parser.y:118
 		{
 			yyVAL.data_t = &datetimeType{}
 		}
 	case 25:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:115
+		//line parser.y:119
 		{
 			yyVAL.data_t = &floatType{}
 		}
 	case 26:
 		yyDollar = yyS[yypt-2 : yypt+1]
-		//line parser.y:118
+		//line parser.y:122
 		{
 			yyVAL.obj_list_t = yyDollar[1].obj_list_t
 			yyVAL.obj_list_t = append(yyVAL.obj_list_t, yyDollar[2].obj_t)
 		}
 	case 27:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:119
+		//line parser.y:123
 		{
 			yyVAL.obj_list_t = append(yyVAL.obj_list_t, yyDollar[1].obj_t)
 		}
 	case 28:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:122
+		//line parser.y:126
 		{
 			yyVAL.obj_t = yyDollar[1].obj_t
 		}
 	case 29:
 		yyDollar = yyS[yypt-2 : yypt+1]
-		//line parser.y:125
+		//line parser.y:129
 		{
 			yyVAL.obj_t = &notNullConstraint{}
 		}
 	case 30:
 		yyDollar = yyS[yypt-2 : yypt+1]
-		//line parser.y:126
+		//line parser.y:130
 		{
 			yyVAL.obj_t = &defaultConstraint{yyDollar[2].obj_t}
 		}
 	case 31:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:127
+		//line parser.y:131
 		{
 			yyVAL.obj_t = &autoincrementConstraint{}
 		}
 	case 32:
 		yyDollar = yyS[yypt-4 : yypt+1]
-		//line parser.y:130
+		//line parser.y:134
 		{
 			yyVAL.stmt_t = &alterStatement{yyDollar[3].string_t, yyDollar[4].obj_t}
 		}
 	case 33:
 		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:133
+		//line parser.y:137
 		{
 			yyVAL.obj_t = &alterDrop{yyDollar[3].string_t}
 		}
 	case 34:
 		yyDollar = yyS[yypt-4 : yypt+1]
-		//line parser.y:134
+		//line parser.y:138
 		{
 			yyVAL.obj_t = &alterAdd{yyDollar[2].string_t, yyDollar[3].data_t, yyDollar[4].obj_list_t}
 		}
 	case 35:
 		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:135
+		//line parser.y:139
 		{
 			yyVAL.obj_t = &alterAdd{yyDollar[2].string_t, yyDollar[3].data_t, nil}
 		}
 	case 36:
 		yyDollar = yyS[yypt-5 : yypt+1]
-		//line parser.y:136
+		//line parser.y:140
 		{
 			yyVAL.obj_t = &alterAdd{yyDollar[3].string_t, yyDollar[4].data_t, yyDollar[5].obj_list_t}
 		}
 	case 37:
 		yyDollar = yyS[yypt-4 : yypt+1]
-		//line parser.y:137
+		//line parser.y:141
 		{
 			yyVAL.obj_t = &alterAdd{yyDollar[3].string_t, yyDollar[4].data_t, nil}
 		}
 	case 38:
 		yyDollar = yyS[yypt-4 : yypt+1]
-		//line parser.y:138
+		//line parser.y:142
 		{
 			yyVAL.obj_t = &alterModify{yyDollar[3].string_t, yyDollar[4].data_t, nil}
 		}
 	case 39:
 		yyDollar = yyS[yypt-5 : yypt+1]
-		//line parser.y:139
+		//line parser.y:143
 		{
 			yyVAL.obj_t = &alterModify{yyDollar[3].string_t, yyDollar[4].data_t, yyDollar[5].obj_list_t}
 		}
 	case 40:
 		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:142
+		//line parser.y:146
 		{
 			yyVAL.stmt_t = &dropStatement{yyDollar[3].string_t}
 		}
 	case 41:
-		yyDollar = yyS[yypt-6 : yypt+1]
-		//line parser.y:145
+		yyDollar = yyS[yypt-7 : yypt+1]
+		//line parser.y:149
 		{
-			yyVAL.stmt_t = &selectStatement{yyDollar[4].string_t, yyDollar[5].string_t, yyDollar[2].columnSpec_list_t, yyDollar[6].expr_t}
+			yyVAL.stmt_t = &selectStatement{yyDollar[2].columnSpec_list_t, yyDollar[4].string_t, yyDollar[5].string_t, yyDollar[6].joinSpec_list_t, yyDollar[7].expr_t}
 		}
 	case 42:
 		yyDollar = yyS[yypt-5 : yypt+1]
-		//line parser.y:146
+		//line parser.y:150
 		{
-			yyVAL.stmt_t = &selectStatement{yyDollar[4].string_t, "", yyDollar[2].columnSpec_list_t, yyDollar[5].expr_t}
+			yyVAL.stmt_t = &selectStatement{yyDollar[2].columnSpec_list_t, yyDollar[4].string_t, "", nil, yyDollar[5].expr_t}
 		}
 	case 43:
 		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:149
+		//line parser.y:153
 		{
 			yyVAL.columnSpec_list_t = yyDollar[1].columnSpec_list_t
 			yyVAL.columnSpec_list_t = append(yyVAL.columnSpec_list_t, yyDollar[3].columnSpec_t)
 		}
 	case 44:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:150
+		//line parser.y:154
 		{
 			yyVAL.columnSpec_list_t = append(yyVAL.columnSpec_list_t, yyDollar[1].columnSpec_t)
 		}
 	case 45:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:153
+		//line parser.y:157
 		{
 			yyVAL.columnSpec_t = columnSpec{true, "", "", ""}
 		}
 	case 46:
 		yyDollar = yyS[yypt-2 : yypt+1]
-		//line parser.y:154
+		//line parser.y:158
 		{
 			yyVAL.columnSpec_t = columnSpec{false, yyDollar[1].string_t, "", yyDollar[2].string_t}
 		}
 	case 47:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:155
+		//line parser.y:159
 		{
 			yyVAL.columnSpec_t = columnSpec{false, yyDollar[1].string_t, "", ""}
 		}
 	case 48:
 		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:156
+		//line parser.y:160
 		{
 			yyVAL.columnSpec_t = columnSpec{false, yyDollar[1].string_t, yyDollar[2].string_t, yyDollar[3].string_t}
 		}
 	case 49:
 		yyDollar = yyS[yypt-2 : yypt+1]
-		//line parser.y:157
+		//line parser.y:161
 		{
 			yyVAL.columnSpec_t = columnSpec{false, yyDollar[1].string_t, yyDollar[2].string_t, " "}
 		}
 	case 50:
 		yyDollar = yyS[yypt-8 : yypt+1]
-		//line parser.y:160
+		//line parser.y:164
 		{
 			yyVAL.stmt_t = &insertStatement{yyDollar[3].string_t, yyDollar[5].string_list_t, yyDollar[8].obj_list_t}
 		}
 	case 51:
 		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:163
+		//line parser.y:167
 		{
 			yyVAL.string_list_t = yyDollar[1].string_list_t
 			yyVAL.string_list_t = append(yyVAL.string_list_t, yyDollar[3].string_t)
 		}
 	case 52:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:164
+		//line parser.y:168
 		{
 			yyVAL.string_list_t = append(yyVAL.string_list_t, yyDollar[1].string_t)
 		}
 	case 53:
 		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:167
+		//line parser.y:171
 		{
 			yyVAL.obj_list_t = yyDollar[1].obj_list_t
 			yyVAL.obj_list_t = append(yyVAL.obj_list_t, yyDollar[3].obj_list_t)
 		}
 	case 54:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:168
+		//line parser.y:172
 		{
 			yyVAL.obj_list_t = append(yyDollar[1].obj_list_t)
 		}
 	case 55:
 		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:171
+		//line parser.y:175
 		{
 			yyVAL.obj_list_t = yyDollar[2].obj_list_t
 		}
 	case 56:
 		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:174
+		//line parser.y:178
 		{
 			yyVAL.obj_list_t = yyDollar[1].obj_list_t
 			yyVAL.obj_list_t = append(yyVAL.obj_list_t, yyDollar[3].obj_t)
 		}
 	case 57:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:175
+		//line parser.y:179
 		{
 			yyVAL.obj_list_t = append(yyVAL.obj_list_t, yyDollar[1].obj_t)
 		}
 	case 58:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:178
+		//line parser.y:182
 		{
 			yyVAL.obj_t = yyDollar[1].string_t
 		}
 	case 59:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:179
+		//line parser.y:183
 		{
 			yyVAL.obj_t = yyDollar[1].int64_t
 		}
 	case 60:
-		yyDollar = yyS[yypt-4 : yypt+1]
-		//line parser.y:182
+		yyDollar = yyS[yypt-1 : yypt+1]
+		//line parser.y:186
 		{
-			yyVAL.stmt_t = &deleteStatement{yyDollar[2].string_t, yyDollar[3].string_t, yyDollar[4].expr_t}
+			yyVAL.joinSpec_list_t = yyDollar[1].joinSpec_list_t
 		}
 	case 61:
-		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:183
+		yyDollar = yyS[yypt-0 : yypt+1]
+		//line parser.y:187
 		{
-			yyVAL.stmt_t = &deleteStatement{yyDollar[2].string_t, "", yyDollar[3].expr_t}
+			yyVAL.joinSpec_list_t = nil
 		}
 	case 62:
 		yyDollar = yyS[yypt-2 : yypt+1]
-		//line parser.y:186
+		//line parser.y:190
 		{
-			yyVAL.string_t = yyDollar[2].string_t
+			yyVAL.joinSpec_list_t = yyDollar[1].joinSpec_list_t
+			yyVAL.joinSpec_list_t = append(yyVAL.joinSpec_list_t, yyDollar[2].joinSpec_t)
 		}
 	case 63:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:187
-		{
-			yyVAL.string_t = yyDollar[1].string_t
-		}
-	case 64:
-		yyDollar = yyS[yypt-2 : yypt+1]
-		//line parser.y:190
-		{
-			yyVAL.expr_t = yyDollar[2].expr_t
-		}
-	case 65:
-		yyDollar = yyS[yypt-0 : yypt+1]
 		//line parser.y:191
 		{
-			yyVAL.expr_t = nil
+			yyVAL.joinSpec_list_t = append(yyVAL.joinSpec_list_t, yyDollar[1].joinSpec_t)
 		}
-	case 66:
-		yyDollar = yyS[yypt-1 : yypt+1]
+	case 64:
+		yyDollar = yyS[yypt-6 : yypt+1]
 		//line parser.y:194
 		{
-			yyVAL.expr_t = yyDollar[1].expr_t
+			yyVAL.joinSpec_t = joinSpec{yyDollar[3].string_t, yyDollar[4].string_t, yyDollar[6].expr_t}
+		}
+	case 65:
+		yyDollar = yyS[yypt-5 : yypt+1]
+		//line parser.y:195
+		{
+			yyVAL.joinSpec_t = joinSpec{yyDollar[3].string_t, "", yyDollar[5].expr_t}
+		}
+	case 66:
+		yyDollar = yyS[yypt-4 : yypt+1]
+		//line parser.y:198
+		{
+			yyVAL.stmt_t = &deleteStatement{yyDollar[2].string_t, yyDollar[3].string_t, yyDollar[4].expr_t}
 		}
 	case 67:
-		yyDollar = yyS[yypt-4 : yypt+1]
-		//line parser.y:197
+		yyDollar = yyS[yypt-3 : yypt+1]
+		//line parser.y:199
 		{
-			yyVAL.stmt_t = &updateStatement{yyDollar[2].string_t, yyDollar[3].assignments_list, yyDollar[4].expr_t}
+			yyVAL.stmt_t = &deleteStatement{yyDollar[2].string_t, "", yyDollar[3].expr_t}
 		}
 	case 68:
 		yyDollar = yyS[yypt-2 : yypt+1]
-		//line parser.y:200
+		//line parser.y:202
+		{
+			yyVAL.string_t = yyDollar[2].string_t
+		}
+	case 69:
+		yyDollar = yyS[yypt-1 : yypt+1]
+		//line parser.y:203
+		{
+			yyVAL.string_t = yyDollar[1].string_t
+		}
+	case 70:
+		yyDollar = yyS[yypt-2 : yypt+1]
+		//line parser.y:206
+		{
+			yyVAL.expr_t = yyDollar[2].expr_t
+		}
+	case 71:
+		yyDollar = yyS[yypt-0 : yypt+1]
+		//line parser.y:207
+		{
+			yyVAL.expr_t = nil
+		}
+	case 72:
+		yyDollar = yyS[yypt-1 : yypt+1]
+		//line parser.y:210
+		{
+			yyVAL.expr_t = yyDollar[1].expr_t
+		}
+	case 73:
+		yyDollar = yyS[yypt-4 : yypt+1]
+		//line parser.y:213
+		{
+			yyVAL.stmt_t = &updateStatement{yyDollar[2].string_t, yyDollar[3].assignments_list, yyDollar[4].expr_t}
+		}
+	case 74:
+		yyDollar = yyS[yypt-2 : yypt+1]
+		//line parser.y:216
 		{
 			yyVAL.assignments_list = yyDollar[2].assignments_list
 		}
-	case 69:
+	case 75:
 		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:203
+		//line parser.y:219
 		{
 			yyVAL.assignments_list = yyDollar[1].assignments_list
 			yyVAL.assignments_list = append(yyDollar[1].assignments_list, yyDollar[3].assignment_t)
 		}
-	case 70:
+	case 76:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:204
+		//line parser.y:220
 		{
 			yyVAL.assignments_list = append(yyVAL.assignments_list, yyDollar[1].assignment_t)
 		}
-	case 71:
-		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:207
-		{
-			yyVAL.assignment_t = assignment{yyDollar[1].string_t, yyDollar[3].expr_t}
-		}
-	case 72:
-		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:210
-		{
-			yyVAL.expr_t = &orExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
-		}
-	case 73:
-		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:211
-		{
-			yyVAL.expr_t = yyDollar[1].expr_t
-		}
-	case 74:
-		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:214
-		{
-			yyVAL.expr_t = &andExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
-		}
-	case 75:
-		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:215
-		{
-			yyVAL.expr_t = yyDollar[1].expr_t
-		}
-	case 76:
-		yyDollar = yyS[yypt-2 : yypt+1]
-		//line parser.y:218
-		{
-			yyVAL.expr_t = &notExpression{yyDollar[2].expr_t}
-		}
 	case 77:
-		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:219
-		{
-			yyVAL.expr_t = yyDollar[1].expr_t
-		}
-	case 78:
-		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:222
-		{
-			yyVAL.expr_t = &ltExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
-		}
-	case 79:
 		yyDollar = yyS[yypt-3 : yypt+1]
 		//line parser.y:223
 		{
-			yyVAL.expr_t = &gtExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
+			yyVAL.assignment_t = assignment{yyDollar[1].string_t, yyDollar[3].expr_t}
 		}
-	case 80:
-		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:224
-		{
-			yyVAL.expr_t = &eqExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
-		}
-	case 81:
-		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:225
-		{
-			yyVAL.expr_t = &lteExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
-		}
-	case 82:
+	case 78:
 		yyDollar = yyS[yypt-3 : yypt+1]
 		//line parser.y:226
 		{
-			yyVAL.expr_t = &gteExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
+			yyVAL.expr_t = &orExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
 		}
-	case 83:
-		yyDollar = yyS[yypt-3 : yypt+1]
+	case 79:
+		yyDollar = yyS[yypt-1 : yypt+1]
 		//line parser.y:227
 		{
-			yyVAL.expr_t = &neExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
+			yyVAL.expr_t = yyDollar[1].expr_t
+		}
+	case 80:
+		yyDollar = yyS[yypt-3 : yypt+1]
+		//line parser.y:230
+		{
+			yyVAL.expr_t = &andExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
+		}
+	case 81:
+		yyDollar = yyS[yypt-1 : yypt+1]
+		//line parser.y:231
+		{
+			yyVAL.expr_t = yyDollar[1].expr_t
+		}
+	case 82:
+		yyDollar = yyS[yypt-2 : yypt+1]
+		//line parser.y:234
+		{
+			yyVAL.expr_t = &notExpression{yyDollar[2].expr_t}
+		}
+	case 83:
+		yyDollar = yyS[yypt-1 : yypt+1]
+		//line parser.y:235
+		{
+			yyVAL.expr_t = yyDollar[1].expr_t
 		}
 	case 84:
 		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:228
+		//line parser.y:238
 		{
-			yyVAL.expr_t = &likeExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
+			yyVAL.expr_t = &ltExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
 		}
 	case 85:
 		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:229
+		//line parser.y:239
 		{
-			yyVAL.expr_t = &betweenExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
+			yyVAL.expr_t = &gtExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
 		}
 	case 86:
-		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:230
+		yyDollar = yyS[yypt-3 : yypt+1]
+		//line parser.y:240
 		{
-			yyVAL.expr_t = yyDollar[1].expr_t
+			yyVAL.expr_t = &eqExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
 		}
 	case 87:
 		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:233
+		//line parser.y:241
 		{
-			yyVAL.expr_t = &betweenExpression{&intExpression{yyDollar[1].int64_t}, &intExpression{yyDollar[3].int64_t}}
+			yyVAL.expr_t = &lteExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
 		}
 	case 88:
 		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:236
+		//line parser.y:242
 		{
-			yyVAL.expr_t = &sumExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
+			yyVAL.expr_t = &gteExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
 		}
 	case 89:
 		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:237
+		//line parser.y:243
 		{
-			yyVAL.expr_t = &subExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
+			yyVAL.expr_t = &neExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
 		}
 	case 90:
-		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:238
+		yyDollar = yyS[yypt-3 : yypt+1]
+		//line parser.y:244
 		{
-			yyVAL.expr_t = yyDollar[1].expr_t
+			yyVAL.expr_t = &likeExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
 		}
 	case 91:
 		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:241
+		//line parser.y:245
 		{
-			yyVAL.expr_t = &multExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
+			yyVAL.expr_t = &betweenExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
 		}
 	case 92:
-		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:242
-		{
-			yyVAL.expr_t = &divExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
-		}
-	case 93:
-		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:243
-		{
-			yyVAL.expr_t = yyDollar[1].expr_t
-		}
-	case 94:
 		yyDollar = yyS[yypt-1 : yypt+1]
 		//line parser.y:246
 		{
-			yyVAL.expr_t = &intExpression{yyDollar[1].int64_t}
+			yyVAL.expr_t = yyDollar[1].expr_t
+		}
+	case 93:
+		yyDollar = yyS[yypt-3 : yypt+1]
+		//line parser.y:249
+		{
+			yyVAL.expr_t = &betweenExpression{&intExpression{yyDollar[1].int64_t}, &intExpression{yyDollar[3].int64_t}}
+		}
+	case 94:
+		yyDollar = yyS[yypt-3 : yypt+1]
+		//line parser.y:252
+		{
+			yyVAL.expr_t = &sumExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
 		}
 	case 95:
-		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:247
+		yyDollar = yyS[yypt-3 : yypt+1]
+		//line parser.y:253
 		{
-			yyVAL.expr_t = yyDollar[1].expr_t
+			yyVAL.expr_t = &subExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
 		}
 	case 96:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:248
-		{
-			yyVAL.expr_t = &stringExpression{yyDollar[1].string_t}
-		}
-	case 97:
-		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:249
-		{
-			yyVAL.expr_t = &idExpression{yyDollar[1].string_t, ""}
-		}
-	case 98:
-		yyDollar = yyS[yypt-2 : yypt+1]
-		//line parser.y:250
-		{
-			yyVAL.expr_t = idExpression{yyDollar[1].string_t, yyDollar[2].string_t}
-		}
-	case 99:
-		yyDollar = yyS[yypt-3 : yypt+1]
-		//line parser.y:251
-		{
-			yyVAL.expr_t = yyDollar[2].expr_t
-		}
-	case 100:
-		yyDollar = yyS[yypt-2 : yypt+1]
 		//line parser.y:254
 		{
-			yyVAL.string_t = yyDollar[2].string_t
+			yyVAL.expr_t = yyDollar[1].expr_t
+		}
+	case 97:
+		yyDollar = yyS[yypt-3 : yypt+1]
+		//line parser.y:257
+		{
+			yyVAL.expr_t = &multExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
+		}
+	case 98:
+		yyDollar = yyS[yypt-3 : yypt+1]
+		//line parser.y:258
+		{
+			yyVAL.expr_t = &divExpression{yyDollar[1].expr_t, yyDollar[3].expr_t}
+		}
+	case 99:
+		yyDollar = yyS[yypt-1 : yypt+1]
+		//line parser.y:259
+		{
+			yyVAL.expr_t = yyDollar[1].expr_t
+		}
+	case 100:
+		yyDollar = yyS[yypt-1 : yypt+1]
+		//line parser.y:262
+		{
+			yyVAL.expr_t = &intExpression{yyDollar[1].int64_t}
 		}
 	case 101:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:257
+		//line parser.y:263
 		{
-			yyVAL.expr_t = &trueExpression{}
+			yyVAL.expr_t = yyDollar[1].expr_t
 		}
 	case 102:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:258
+		//line parser.y:264
 		{
-			yyVAL.expr_t = &falseExpression{}
+			yyVAL.expr_t = &stringExpression{yyDollar[1].string_t}
 		}
 	case 103:
 		yyDollar = yyS[yypt-1 : yypt+1]
-		//line parser.y:259
+		//line parser.y:265
+		{
+			yyVAL.expr_t = &idExpression{yyDollar[1].string_t, ""}
+		}
+	case 104:
+		yyDollar = yyS[yypt-2 : yypt+1]
+		//line parser.y:266
+		{
+			yyVAL.expr_t = idExpression{yyDollar[1].string_t, yyDollar[2].string_t}
+		}
+	case 105:
+		yyDollar = yyS[yypt-3 : yypt+1]
+		//line parser.y:267
+		{
+			yyVAL.expr_t = yyDollar[2].expr_t
+		}
+	case 106:
+		yyDollar = yyS[yypt-2 : yypt+1]
+		//line parser.y:270
+		{
+			yyVAL.string_t = yyDollar[2].string_t
+		}
+	case 107:
+		yyDollar = yyS[yypt-1 : yypt+1]
+		//line parser.y:273
+		{
+			yyVAL.expr_t = &trueExpression{}
+		}
+	case 108:
+		yyDollar = yyS[yypt-1 : yypt+1]
+		//line parser.y:274
+		{
+			yyVAL.expr_t = &falseExpression{}
+		}
+	case 109:
+		yyDollar = yyS[yypt-1 : yypt+1]
+		//line parser.y:275
 		{
 			yyVAL.expr_t = &nullExpression{}
 		}
