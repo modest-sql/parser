@@ -63,6 +63,32 @@ type sumExpression struct {
 
 func (s *sumExpression) convert() interface{} {
 
+	switch v1 := s.leftValue.(type) {
+	case *intExpression:
+		switch v2 := s.rightValue.(type) {
+		case *intExpression:
+			value := intExpression{v1.value + v2.value}
+			return value.convert()
+		case *floatExpression:
+			value := floatExpression{float64(v1.value) + v2.value}
+			return value.convert()
+		}
+	case *floatExpression:
+		switch v2 := s.rightValue.(type) {
+		case *floatExpression:
+			value := floatExpression{v1.value + v2.value}
+			return value.convert()
+		case *intExpression:
+			value := floatExpression{v1.value + float64(v2.value)}
+			return value.convert()
+		}
+	case *stringExpression:
+		switch v2 := s.rightValue.(type) {
+		case *stringExpression:
+			value := stringExpression{v1.value + v2.value}
+			return value.convert()
+		}
+	}
 	return common.NewSumCommon(s.rightValue.convert(), s.leftValue.convert())
 }
 
@@ -72,6 +98,26 @@ type subExpression struct {
 }
 
 func (s *subExpression) convert() interface{} {
+	switch v1 := s.leftValue.(type) {
+	case *intExpression:
+		switch v2 := s.rightValue.(type) {
+		case *intExpression:
+			value := intExpression{v1.value - v2.value}
+			return value.convert()
+		case *floatExpression:
+			value := floatExpression{float64(v1.value) - v2.value}
+			return value.convert()
+		}
+	case *floatExpression:
+		switch v2 := s.rightValue.(type) {
+		case *floatExpression:
+			value := floatExpression{v1.value - v2.value}
+			return value.convert()
+		case *intExpression:
+			value := floatExpression{v1.value - float64(v2.value)}
+			return value.convert()
+		}
+	}
 	return common.NewSubCommon(s.rightValue.convert(), s.leftValue.convert())
 }
 
@@ -81,6 +127,26 @@ type multExpression struct {
 }
 
 func (s *multExpression) convert() interface{} {
+	switch v1 := s.leftValue.(type) {
+	case *intExpression:
+		switch v2 := s.rightValue.(type) {
+		case *intExpression:
+			value := intExpression{v1.value * v2.value}
+			return value.convert()
+		case *floatExpression:
+			value := floatExpression{float64(v1.value) * v2.value}
+			return value.convert()
+		}
+	case *floatExpression:
+		switch v2 := s.rightValue.(type) {
+		case *floatExpression:
+			value := floatExpression{v1.value * v2.value}
+			return value.convert()
+		case *intExpression:
+			value := floatExpression{v1.value * float64(v2.value)}
+			return value.convert()
+		}
+	}
 	return common.NewMultCommon(s.rightValue.convert(), s.leftValue.convert())
 }
 
@@ -90,6 +156,26 @@ type divExpression struct {
 }
 
 func (s *divExpression) convert() interface{} {
+	switch v1 := s.leftValue.(type) {
+	case *intExpression:
+		switch v2 := s.rightValue.(type) {
+		case *intExpression:
+			value := intExpression{v1.value / v2.value}
+			return value.convert()
+		case *floatExpression:
+			value := floatExpression{float64(v1.value) / v2.value}
+			return value.convert()
+		}
+	case *floatExpression:
+		switch v2 := s.rightValue.(type) {
+		case *floatExpression:
+			value := floatExpression{v1.value / v2.value}
+			return value.convert()
+		case *intExpression:
+			value := floatExpression{v1.value / float64(v2.value)}
+			return value.convert()
+		}
+	}
 	return common.NewDivCommon(s.rightValue.convert(), s.leftValue.convert())
 }
 
