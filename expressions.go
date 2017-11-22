@@ -1,7 +1,18 @@
 package parser
 
+import "github.com/modest-sql/common"
+
 type expression interface {
 	convert() interface{}
+}
+
+type assignment struct {
+	identifier string
+	value      expression
+}
+
+func (s *assignment) convert() interface{} {
+	return common.NewAssignmentCommon(s.identifier, s.value.convert())
 }
 
 type idExpression struct {
@@ -10,7 +21,7 @@ type idExpression struct {
 }
 
 func (s *idExpression) convert() interface{} {
-	return nil
+	return common.NewIdCommon(s.name, s.alias)
 }
 
 type intExpression struct {
@@ -18,7 +29,7 @@ type intExpression struct {
 }
 
 func (s *intExpression) convert() interface{} {
-	return nil
+	return common.NewIntCommon(s.value)
 }
 
 type boolExpression struct {
@@ -26,7 +37,7 @@ type boolExpression struct {
 }
 
 func (s *boolExpression) convert() interface{} {
-	return nil
+	return common.NewBoolCommon(s.value)
 }
 
 type floatExpression struct {
@@ -34,7 +45,7 @@ type floatExpression struct {
 }
 
 func (s *floatExpression) convert() interface{} {
-	return nil
+	return common.NewFloatCommon(s.value)
 }
 
 type stringExpression struct {
@@ -42,7 +53,7 @@ type stringExpression struct {
 }
 
 func (s *stringExpression) convert() interface{} {
-	return nil
+	return common.NewStringCommon(s.value)
 }
 
 type sumExpression struct {
@@ -51,7 +62,8 @@ type sumExpression struct {
 }
 
 func (s *sumExpression) convert() interface{} {
-	return nil
+
+	return common.NewSumCommon(s.rightValue.convert(), s.leftValue.convert())
 }
 
 type subExpression struct {
@@ -60,7 +72,7 @@ type subExpression struct {
 }
 
 func (s *subExpression) convert() interface{} {
-	return nil
+	return common.NewSubCommon(s.rightValue.convert(), s.leftValue.convert())
 }
 
 type multExpression struct {
@@ -69,7 +81,7 @@ type multExpression struct {
 }
 
 func (s *multExpression) convert() interface{} {
-	return nil
+	return common.NewMultCommon(s.rightValue.convert(), s.leftValue.convert())
 }
 
 type divExpression struct {
@@ -78,7 +90,7 @@ type divExpression struct {
 }
 
 func (s *divExpression) convert() interface{} {
-	return nil
+	return common.NewDivCommon(s.rightValue.convert(), s.leftValue.convert())
 }
 
 type eqExpression struct {
@@ -87,7 +99,7 @@ type eqExpression struct {
 }
 
 func (s *eqExpression) convert() interface{} {
-	return nil
+	return common.NewEqCommon(s.rightValue.convert(), s.leftValue.convert())
 }
 
 type neExpression struct {
@@ -96,7 +108,7 @@ type neExpression struct {
 }
 
 func (s *neExpression) convert() interface{} {
-	return nil
+	return common.NewNeCommon(s.rightValue.convert(), s.leftValue.convert())
 }
 
 type ltExpression struct {
@@ -105,7 +117,7 @@ type ltExpression struct {
 }
 
 func (s *ltExpression) convert() interface{} {
-	return nil
+	return common.NewLtCommon(s.rightValue.convert(), s.leftValue.convert())
 }
 
 type gtExpression struct {
@@ -114,7 +126,7 @@ type gtExpression struct {
 }
 
 func (s *gtExpression) convert() interface{} {
-	return nil
+	return common.NewGtCommon(s.rightValue.convert(), s.leftValue.convert())
 }
 
 type lteExpression struct {
@@ -123,7 +135,7 @@ type lteExpression struct {
 }
 
 func (s *lteExpression) convert() interface{} {
-	return nil
+	return common.NewLteCommon(s.rightValue.convert(), s.leftValue.convert())
 }
 
 type gteExpression struct {
@@ -132,7 +144,7 @@ type gteExpression struct {
 }
 
 func (s *gteExpression) convert() interface{} {
-	return nil
+	return common.NewGteCommon(s.rightValue.convert(), s.leftValue.convert())
 }
 
 type betweenExpression struct {
@@ -141,7 +153,7 @@ type betweenExpression struct {
 }
 
 func (s *betweenExpression) convert() interface{} {
-	return nil
+	return common.NewBetweenCommon(s.rightValue.convert(), s.leftValue.convert())
 }
 
 type likeExpression struct {
@@ -150,7 +162,7 @@ type likeExpression struct {
 }
 
 func (s *likeExpression) convert() interface{} {
-	return nil
+	return common.NewLikeCommon(s.rightValue.convert(), s.leftValue.convert())
 }
 
 type notExpression struct {
@@ -158,7 +170,7 @@ type notExpression struct {
 }
 
 func (s *notExpression) convert() interface{} {
-	return nil
+	return common.NewNotCommon(s.not.convert())
 }
 
 type andExpression struct {
@@ -167,7 +179,7 @@ type andExpression struct {
 }
 
 func (s *andExpression) convert() interface{} {
-	return nil
+	return common.NewAndCommon(s.rightValue.convert(), s.leftValue.convert())
 }
 
 type orExpression struct {
@@ -176,26 +188,26 @@ type orExpression struct {
 }
 
 func (s *orExpression) convert() interface{} {
-	return nil
+	return common.NewOrCommon(s.rightValue.convert(), s.leftValue.convert())
 }
 
 type nullExpression struct {
 }
 
 func (s *nullExpression) convert() interface{} {
-	return nil
+	return common.NewNullCommon()
 }
 
 type falseExpression struct {
 }
 
 func (s *falseExpression) convert() interface{} {
-	return nil
+	return common.NewFalseCommon()
 }
 
 type trueExpression struct {
 }
 
 func (s *trueExpression) convert() interface{} {
-	return nil
+	return common.NewTrueCommon()
 }

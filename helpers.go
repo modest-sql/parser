@@ -85,7 +85,3 @@ func (c *columnDefinition) defaultValue() interface{} {
 	return nil
 }
 
-type assignment struct {
-	identifier string
-	value      expression
-}
