@@ -126,9 +126,14 @@ column_constraint_list: column_constraint_list column_constraint { $$ = $1; $$ =
 column_constraint: constr_not_null { $$  = $1 }
 ;
 
-constr_not_null: KW_NOT KW_NULL { $$ = &notNullConstraint{} }
-    | KW_DEFAULT value_literal { $$ = &defaultConstraint{$2} }
-    | KW_AUTO_INCREMENT { $$ = &autoincrementConstraint{} }
+constr_not_null: KW_NOT KW_NULL { $$ = &notNullConstraint{ } }
+    | KW_DEFAULT value_literal { $$ = &defaultConstraint{ $2 } }
+    | KW_AUTO_INCREMENT { $$ = &autoincrementConstraint{ } }
+    | key_constraint { $$ = $1 }
+;
+
+key_constraint: KW_PRIMARY KW_KEY { $$ = &primaryKeyConstraint{ } }
+    | KW_FOREIGN KW_KEY { $$ = &foreignKeyConstraint{ } }
 ;
 
 alter_statement: KW_ALTER KW_TABLE TK_ID alter_instruction { $$ = &alterStatement{$3,$4}  }
@@ -162,6 +167,7 @@ select_col: TK_STAR { $$ = columnSpec{true,"","",""} }
 ;
 
 insert_statement: KW_INSERT KW_INTO TK_ID TK_LEFT_PAR column_names_list TK_RIGHT_PAR KW_VALUES values_tuples_list {  $$ = &insertStatement{$3,$5,$8} }
+    | KW_INSERT KW_INTO TK_ID KW_VALUES values_tuples_list {  $$ = &insertStatement{$3, nil, $5} }
 ;
 
 column_names_list: column_names_list TK_COMMA TK_ID { $$ = $1; $$ = append($$, $3) }
@@ -181,6 +187,7 @@ values_list: values_list TK_COMMA value_literal { $$ = $1; $$ = append($$,$3)}
 
 value_literal: STR_LIT { $$ = $1 }
     | INT_LIT { $$ = $1 }
+    | FLOAT_LIT { }
 ;
 
 opt_joins_list: join_list { $$ = $1 }

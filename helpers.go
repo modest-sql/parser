@@ -19,6 +19,12 @@ type defaultConstraint struct {
 	value interface{}
 }
 
+type primaryKeyConstraint struct {
+}
+
+type foreignKeyConstraint struct {
+}
+
 type columnDefinitions []*columnDefinition
 
 func (cd columnDefinitions) convert() (tableColumns common.TableColumnDefiners) {
@@ -41,15 +47,15 @@ type columnDefinition struct {
 func (c *columnDefinition) convert() common.TableColumnDefiner {
 	switch v := c.dataType.(type) {
 	case *booleanType:
-		return common.NewBooleanTableColumn(c.identifier, c.defaultValue(), c.nullable(), c.autoincrementable())
+		return common.NewBooleanTableColumn(c.identifier, c.defaultValue(), c.nullable(), c.autoincrementable(), c.isPrimaryKey(), c.isForeignKey())
 	case *integerType:
-		return common.NewIntegerTableColumn(c.identifier, c.defaultValue(), c.nullable(), c.autoincrementable())
+		return common.NewIntegerTableColumn(c.identifier, c.defaultValue(), c.nullable(), c.autoincrementable(), c.isPrimaryKey(), c.isForeignKey())
 	case *floatType:
-		return common.NewFloatTableColumn(c.identifier, c.defaultValue(), c.nullable(), c.autoincrementable())
+		return common.NewFloatTableColumn(c.identifier, c.defaultValue(), c.nullable(), c.autoincrementable(), c.isPrimaryKey(), c.isForeignKey())
 	case *datetimeType:
-		return common.NewDatetimeTableColumn(c.identifier, c.defaultValue(), c.nullable(), c.autoincrementable())
+		return common.NewDatetimeTableColumn(c.identifier, c.defaultValue(), c.nullable(), c.autoincrementable(), c.isPrimaryKey(), c.isForeignKey())
 	case *charType:
-		return common.NewCharTableColumn(c.identifier, c.defaultValue(), c.nullable(), c.autoincrementable(), uint16(v.length))
+		return common.NewCharTableColumn(c.identifier, c.defaultValue(), c.nullable(), c.autoincrementable(), c.isPrimaryKey(), c.isForeignKey(), uint16(v.length))
 	}
 
 	return nil
@@ -68,6 +74,26 @@ func (c *columnDefinition) nullable() bool {
 func (c *columnDefinition) autoincrementable() bool {
 	for _, constraint := range c.columnConstraints {
 		if _, ok := constraint.(autoincrementConstraint); ok {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (c *columnDefinition) isPrimaryKey() bool {
+	for _, constraint := range c.columnConstraints {
+		if _, ok := constraint.(primaryKeyConstraint); ok {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (c *columnDefinition) isForeignKey() bool {
+	for _, constraint := range c.columnConstraints {
+		if _, ok := constraint.(foreignKeyConstraint); ok {
 			return true
 		}
 	}

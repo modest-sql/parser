@@ -28,6 +28,9 @@
 /[oO][rR]/                          { return KW_OR }
 /[nN][oO][tT]/                      { return KW_NOT }
 /[dD][eE][fF][aA][uU][lL][lT]/      { return KW_DEFAULT }
+/[pP][rR][iI][mM][aA][rR][yY]/      { return KW_PRIMARY }
+/[fF][oO][rR][eE][iI][gG][nN]/      { return KW_FOREIGN }
+/[kK][eE][yY]/                      { return KW_KEY }
 /[iI][nN][tT][eE][gG][eE][rR]/      { return KW_INTEGER }
 /[cC][hH][aA][rR]/                  { return KW_CHAR }
 /[cC][rR][eE][aA][tT][eE]/          { return KW_CREATE }
