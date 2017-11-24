@@ -14,6 +14,7 @@ var statements statementList
     int64_t int64
     string_t string
     float64_t float64
+    bool_t bool
 
     expr_t expression
 
@@ -47,9 +48,11 @@ var statements statementList
 
 %token<int64_t> INT_LIT
 %token<float64_t> FLOAT_LIT
+%token<bool_t> KW_TRUE KW_FALSE
 %token<string_t> TK_ID STR_LIT
 %type<string_t> multipart_id_suffix alias_spec
 
+%type<bool_t> truth_value
 
 %type<stmt_list_t> statements_list
 %type<stmt_t> statement data_statement schema_statement create_statement alter_statement drop_statement
@@ -65,7 +68,7 @@ var statements statementList
 %type<assignments_list>set_assignments_list set_list
 %type<assignment_t>set_assignment
 %type<obj_t> value_literal
-%type<expr_t> addi_factor relational_factor relational_term truth_value between_term relational_expression
+%type<expr_t> addi_factor relational_factor relational_term between_term relational_expression
 %type<expr_t> boolean_factor boolean_term boolean_value_expression opt_where_clause search_condition
 %type<string_list_t>column_names_list 
 %type<columnSpec_t>select_col
@@ -188,8 +191,9 @@ values_list: values_list TK_COMMA value_literal { $$ = $1; $$ = append($$,$3)}
 
 value_literal: STR_LIT { $$ = $1 }
     | INT_LIT { $$ = $1 }
-    | truth_value { }
-    | FLOAT_LIT { }
+    | truth_value { $$ = $1 }
+    | KW_NULL { $$ = nil }
+    | FLOAT_LIT { $$ = $1 }
 ;
 
 opt_joins_list: join_list { $$ = $1 }
@@ -269,7 +273,7 @@ relational_factor: relational_factor TK_STAR addi_factor { $$ = &multExpression{
 ;
 
 addi_factor: INT_LIT { $$ = &intExpression{ $1 } }
-    | truth_value { $$ = $1 }
+    | truth_value { $$ = &boolExpression{$1} }
     | STR_LIT { $$ = &stringExpression{ $1 } }
     | TK_ID { $$ = &idExpression{ $1 , "" } }
     | TK_ID multipart_id_suffix { $$ = &idExpression{ $1 , $2 }  }
@@ -279,9 +283,8 @@ addi_factor: INT_LIT { $$ = &intExpression{ $1 } }
 multipart_id_suffix: TK_DOT TK_ID { $$ = $2 }
 ;
 
-truth_value: KW_TRUE { $$ = &trueExpression{} }
-    | KW_FALSE { $$ = &falseExpression{} }
-    | KW_NULL { $$ = &nullExpression{} }
+truth_value: KW_TRUE { $$ = true }
+    | KW_FALSE { $$ = false }
 ;
 
 %%
