@@ -37,6 +37,7 @@ var statements statementList
 %token TK_PLUS TK_MINUS TK_STAR TK_DIV TK_LT TK_GT TK_GTE TK_LTE TK_EQ TK_NE
 %token TK_LEFT_PAR TK_RIGHT_PAR TK_COMMA TK_DOT TK_SEMICOLON
 %token KW_OR KW_AND KW_NOT KW_INTEGER KW_FLOAT KW_CHAR KW_BOOLEAN KW_DATETIME
+%token KW_PRIMARY KW_FOREIGN KW_KEY
 %token KW_CREATE KW_TABLE KW_DELETE KW_INSERT
 %token KW_INTO KW_SELECT KW_WHERE KW_FROM KW_UPDATE KW_SET
 %token KW_ALTER KW_VALUES KW_BETWEEN KW_LIKE KW_INNER
@@ -58,7 +59,7 @@ var statements statementList
 %type<col_t> table_element column_definition
 
 %type<obj_list_t> column_constraint_list values_list values_tuple values_tuples_list
-%type<obj_t> column_constraint constr_not_null alter_instruction
+%type<obj_t> column_constraint constr_not_null alter_instruction key_constraint
 
 %type<data_t> data_type
 %type<assignments_list>set_assignments_list set_list
@@ -187,6 +188,7 @@ values_list: values_list TK_COMMA value_literal { $$ = $1; $$ = append($$,$3)}
 
 value_literal: STR_LIT { $$ = $1 }
     | INT_LIT { $$ = $1 }
+    | truth_value { }
     | FLOAT_LIT { }
 ;
 
