@@ -1,9 +1,9 @@
-//line parser.y:4
+//line parser.y:3
 package parser
 
 import __yyfmt__ "fmt"
 
-//line parser.y:4
+//line parser.y:5
 import "io"
 
 /*import "github.com/modest-sql/common"*/
