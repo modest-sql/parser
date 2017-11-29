@@ -112,8 +112,24 @@ type columnSpec struct {
 	table  string
 	column string
 	alias  string
+	function interface{}
 }
-type GroupBySpec struct{
+type functionSum struct{
+
+}
+type functionCount struct{
+	
+}
+type functionAvg struct{
+	
+}
+type functionMin struct{
+	
+}
+type functionMax struct{
+	
+}
+type groupBySpec struct{
 	column string
 	alias  string
 }
