@@ -27,7 +27,7 @@
 /[aA][nN][dD]/                      { return KW_AND }
 /[oO][rR]/                          { return KW_OR }
 /[nN][oO][tT]/                      { return KW_NOT }
-/[dD][eE][fF][aA][uU][lL][lT]/      { return KW_DEFAULT }
+/[dD][eE][fF][aA][uU][lL][tT]/      { return KW_DEFAULT }
 /[pP][rR][iI][mM][aA][rR][yY]/      { return KW_PRIMARY }
 /[fF][oO][rR][eE][iI][gG][nN]/      { return KW_FOREIGN }
 /[kK][eE][yY]/                      { return KW_KEY }

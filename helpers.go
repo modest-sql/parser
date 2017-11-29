@@ -63,7 +63,7 @@ func (c *columnDefinition) convert() common.TableColumnDefiner {
 
 func (c *columnDefinition) nullable() bool {
 	for _, constraint := range c.columnConstraints {
-		if _, ok := constraint.(notNullConstraint); ok {
+		if _, ok := constraint.(*notNullConstraint); ok {
 			return false
 		}
 	}
@@ -73,7 +73,7 @@ func (c *columnDefinition) nullable() bool {
 
 func (c *columnDefinition) autoincrementable() bool {
 	for _, constraint := range c.columnConstraints {
-		if _, ok := constraint.(autoincrementConstraint); ok {
+		if _, ok := constraint.(*autoincrementConstraint); ok {
 			return true
 		}
 	}
@@ -83,7 +83,7 @@ func (c *columnDefinition) autoincrementable() bool {
 
 func (c *columnDefinition) isPrimaryKey() bool {
 	for _, constraint := range c.columnConstraints {
-		if _, ok := constraint.(primaryKeyConstraint); ok {
+		if _, ok := constraint.(*primaryKeyConstraint); ok {
 			return true
 		}
 	}
@@ -93,7 +93,7 @@ func (c *columnDefinition) isPrimaryKey() bool {
 
 func (c *columnDefinition) isForeignKey() bool {
 	for _, constraint := range c.columnConstraints {
-		if _, ok := constraint.(foreignKeyConstraint); ok {
+		if _, ok := constraint.(*foreignKeyConstraint); ok {
 			return true
 		}
 	}
@@ -103,11 +103,10 @@ func (c *columnDefinition) isForeignKey() bool {
 
 func (c *columnDefinition) defaultValue() interface{} {
 	for _, constraint := range c.columnConstraints {
-		if defaultConstraint, ok := constraint.(defaultConstraint); ok {
+		if defaultConstraint, ok := constraint.(*defaultConstraint); ok {
 			return defaultConstraint.value
 		}
 	}
 
 	return nil
 }
-

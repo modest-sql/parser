@@ -1482,7 +1482,7 @@ var dfas = []dfa{
 		},
 	}, []int{ /* Start-of-input transitions */ -1, -1, -1, -1}, []int{ /* End-of-input transitions */ -1, -1, -1, -1}, nil},
 
-	// [dD][eE][fF][aA][uU][lL][lT]
+	// [dD][eE][fF][aA][uU][lL][tT]
 	{[]bool{false, false, false, false, false, false, false, true}, []func(rune) int{ // Transitions
 		func(r rune) int {
 			switch r {
@@ -1510,6 +1510,8 @@ var dfas = []dfa{
 				return -1
 			case 108:
 				return -1
+			case 116:
+				return -1
 			case 117:
 				return -1
 			}
@@ -1540,6 +1542,8 @@ var dfas = []dfa{
 			case 102:
 				return -1
 			case 108:
+				return -1
+			case 116:
 				return -1
 			case 117:
 				return -1
@@ -1572,6 +1576,8 @@ var dfas = []dfa{
 				return 3
 			case 108:
 				return -1
+			case 116:
+				return -1
 			case 117:
 				return -1
 			}
@@ -1602,6 +1608,8 @@ var dfas = []dfa{
 			case 102:
 				return -1
 			case 108:
+				return -1
+			case 116:
 				return -1
 			case 117:
 				return -1
@@ -1634,6 +1642,8 @@ var dfas = []dfa{
 				return -1
 			case 108:
 				return -1
+			case 116:
+				return -1
 			case 117:
 				return 5
 			}
@@ -1665,6 +1675,8 @@ var dfas = []dfa{
 				return -1
 			case 108:
 				return 6
+			case 116:
+				return -1
 			case 117:
 				return -1
 			}
@@ -1695,6 +1707,8 @@ var dfas = []dfa{
 			case 102:
 				return -1
 			case 108:
+				return -1
+			case 116:
 				return 7
 			case 117:
 				return -1
@@ -1726,6 +1740,8 @@ var dfas = []dfa{
 			case 102:
 				return -1
 			case 108:
+				return -1
+			case 116:
 				return -1
 			case 117:
 				return -1
