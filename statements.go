@@ -113,6 +113,10 @@ type columnSpec struct {
 	column string
 	alias  string
 }
+type GroupBySpec struct{
+	column string
+	alias  string
+}
 
 type selectStatement struct {
 	selectColumns   []columnSpec
@@ -120,7 +124,8 @@ type selectStatement struct {
 	mainAlias string
 	joinList []joinSpec
 	whereExpression expression
-}
+	groupBy  []GroupBySpec
+ }
 
 type joinSpec struct {
 	targetTable string

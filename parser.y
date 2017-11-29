@@ -30,7 +30,8 @@ var statements statementList
     assignments_list []assignment
     obj_list_t []interface{}
     string_list_t []string
-
+    group_by_t GroupBySpec
+    group_by_list_t []GroupBySpec
     obj_t interface{}
 }
 
@@ -71,7 +72,8 @@ var statements statementList
 %type<columnSpec_list_t>select_col_list 
 %type<joinSpec_list_t> opt_joins_list join_list
 %type<joinSpec_t> inner_join
-
+%type<group_by_t>op_groupBy 
+%type<group_by_list_t>op_groupBy_List
 %%
 
 input: statements_list { statements = $1 }
@@ -151,10 +153,19 @@ alter_instruction: KW_DROP KW_COLUMN TK_ID {$$ = &alterDrop{ $3 } }
 drop_statement: KW_DROP KW_TABLE TK_ID { $$ = &dropStatement{ $3 } }
 ;
 
-select_statement: KW_SELECT select_col_list KW_FROM TK_ID alias_spec opt_joins_list opt_where_clause { $$ = &selectStatement{$2,$4,$5,$6, $7} }
-    | KW_SELECT select_col_list KW_FROM TK_ID opt_where_clause { $$ = &selectStatement{$2,$4,"", nil, $5} }
+select_statement: KW_SELECT select_col_list KW_FROM TK_ID alias_spec opt_joins_list opt_where_clause op_groupBy_List { $$ = &selectStatement{$2,$4,$5,$6, $7,$8} }
+    | KW_SELECT select_col_list KW_FROM TK_ID opt_where_clause op_groupBy_List{ $$ = &selectStatement{$2,$4,"", nil, $5,$6} }
 ;
 
+op_groupBy_List:op_groupBy_List TK_COMMA  op_groupBy  { $$ = $1 ; $$ = append($$,$3) }
+                |op_groupBy { $$ = append($$,$1) }
+;
+
+op_groupBy:KW_GROUP KW_BY TK_ID { $$ = GroupBySpec{ $2,""} }
+        | KW_GROUP KW_BY TK_ID multipart_id_suffix {  $$ = GroupBySpec{ $2,$3} }
+        | { $$ = nil }
+
+;
 select_col_list: select_col_list TK_COMMA select_col { $$ = $1 ; $$ = append($$,$3) }
     | select_col { $$ = append($$,$1) }
 ;
