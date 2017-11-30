@@ -112,6 +112,26 @@ type columnSpec struct {
 	table  string
 	column string
 	alias  string
+	function interface{}
+}
+type functionSum struct{
+
+}
+type functionCount struct{
+	
+}
+type functionAvg struct{
+	
+}
+type functionMin struct{
+	
+}
+type functionMax struct{
+	
+}
+type groupBySpec struct{
+	column string
+	alias  string
 }
 
 type selectStatement struct {
@@ -120,7 +140,8 @@ type selectStatement struct {
 	mainAlias string
 	joinList []joinSpec
 	whereExpression expression
-}
+	groupBy  []GroupBySpec
+ }
 
 type joinSpec struct {
 	targetTable string
