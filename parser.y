@@ -3,10 +3,14 @@
 %{
 package parser
 
-import "io"
+import {
+    "io"
+    "sync"
+}
 /*import "github.com/modest-sql/common"*/
 
 var statements statementList
+var lock sync.Mutex
 
 %}
 
@@ -299,6 +303,8 @@ func (l *Lexer) Error(s string) {
 }
 
 func Parse(in io.Reader) (commands []interface{}, err error) {
+    lock.Lock()
+    defer lock.Unlock()
     defer func() {
         if r := recover(); r != nil {
             err = r.(error)
