@@ -2,15 +2,17 @@ package parser
 
 import "github.com/modest-sql/common"
 
-const constfloat = "float"
-const constint = "int"
-const conststring = "string"
-const constid = "id"
-const constbool = "bool"
-
+const (
+	constfloat = iota
+	constint = iota
+	conststring = iota
+	constid = iota
+	constbool = iota
+	constassignment = iota
+)
 type expression interface {
 	convert() interface{}
-	evaluateType() string
+	evaluateType() int
 }
 
 type assignment struct {
@@ -22,9 +24,9 @@ func (s *assignment) convert() interface{} {
 	return common.NewAssignmentCommon(s.identifier, s.value.convert())
 }
 
-func (s *assignment) evaluateType() string {
+func (s *assignment) evaluateType() int {
 	s.value.evaluateType()
-	return "assignment"
+	return constassignment
 }
 
 type idExpression struct {
@@ -36,7 +38,7 @@ func (s *idExpression) convert() interface{} {
 	return common.NewIdCommon(s.name, s.alias)
 }
 
-func (s *idExpression) evaluateType() string {
+func (s *idExpression) evaluateType() int {
 	return constid
 }
 type intExpression struct {
@@ -47,7 +49,7 @@ func (s *intExpression) convert() interface{} {
 	return common.NewIntCommon(s.value)
 }
 
-func (s *intExpression) evaluateType() string {
+func (s *intExpression) evaluateType() int {
 	return constint
 }
 type boolExpression struct {
@@ -58,7 +60,7 @@ func (s *boolExpression) convert() interface{} {
 	return common.NewBoolCommon(s.value)
 }
 
-func (s *boolExpression) evaluateType() string {
+func (s *boolExpression) evaluateType() int {
 	return constbool
 }
 
@@ -70,7 +72,7 @@ func (s *floatExpression) convert() interface{} {
 	return common.NewFloatCommon(s.value)
 }
 
-func (s *floatExpression) evaluateType() string {
+func (s *floatExpression) evaluateType() int {
 	return constfloat
 }
 
@@ -82,7 +84,7 @@ func (s *stringExpression) convert() interface{} {
 	return common.NewStringCommon(s.value)
 }
 
-func (s *stringExpression) evaluateType() string {
+func (s *stringExpression) evaluateType() int {
 	return conststring
 }
 
@@ -121,7 +123,7 @@ func (s *sumExpression) convert() interface{} {
 	}
 	return common.NewSumCommon(s.rightValue.convert(), s.leftValue.convert())
 }
-func (s *sumExpression) evaluateType() string {
+func (s *sumExpression) evaluateType() int {
 	v1 := s.leftValue.evaluateType()
 	v2 := s.rightValue.evaluateType()
 	if v1==conststring||v2==conststring {
@@ -140,7 +142,7 @@ type subExpression struct {
 	rightValue expression
 	leftValue  expression
 }
-func (s *subExpression) evaluateType() string {
+func (s *subExpression) evaluateType() int {
 	v1 := s.leftValue.evaluateType()
 	v2 := s.rightValue.evaluateType()
 	if (v1== constfloat && v2==constfloat)||(v1==constint&&v2==constfloat)||(v1==constfloat&&v2==constint){
@@ -183,7 +185,7 @@ type multExpression struct {
 }
 
 
-func (s *multExpression) evaluateType() string {
+func (s *multExpression) evaluateType() int {
 	v1 := s.leftValue.evaluateType()
 	v2 := s.rightValue.evaluateType()
 	 if ((v1==constfloat&&v2==constfloat)||(v1==constint&&v2==constfloat)||(v1==constfloat&&v2==constint)){
@@ -223,7 +225,7 @@ type divExpression struct {
 	rightValue expression
 	leftValue  expression
 }
-func (s *divExpression) evaluateType() string {
+func (s *divExpression) evaluateType() int {
 	v1 := s.leftValue.evaluateType()
 	v2 := s.rightValue.evaluateType()
 	 if ((v1==constfloat&&v2==constfloat)||(v1==constint&&v2==constfloat)||(v1==constfloat&&v2==constint)){
@@ -265,10 +267,10 @@ type eqExpression struct {
 	rightValue expression
 	leftValue  expression
 }
-func (s *eqExpression) evaluateType() string {
+func (s *eqExpression) evaluateType() int {
 	 s.leftValue.evaluateType()
 	 s.rightValue.evaluateType()
-	return ""
+	return 0
 }
 func (s *eqExpression) convert() interface{} {
 	return common.NewEqCommon(s.rightValue.convert(), s.leftValue.convert())
@@ -278,10 +280,10 @@ type neExpression struct {
 	rightValue expression
 	leftValue  expression
 }
-func (s *neExpression) evaluateType() string {
+func (s *neExpression) evaluateType() int {
 	 s.leftValue.evaluateType()
 	 s.rightValue.evaluateType()
-	return ""
+	return 0
 }
 
 func (s *neExpression) convert() interface{} {
@@ -292,10 +294,10 @@ type ltExpression struct {
 	rightValue expression
 	leftValue  expression
 }
-func (s *ltExpression) evaluateType() string {
+func (s *ltExpression) evaluateType() int {
 	 s.leftValue.evaluateType()
 	 s.rightValue.evaluateType()
-	return ""
+	return 0
 }
 
 func (s *ltExpression) convert() interface{} {
@@ -307,10 +309,10 @@ type gtExpression struct {
 	leftValue  expression
 }
 
-func (s *gtExpression) evaluateType() string {
+func (s *gtExpression) evaluateType() int {
 	 s.leftValue.evaluateType()
 	 s.rightValue.evaluateType()
-	return ""
+	return 0
 }
 
 func (s *gtExpression) convert() interface{} {
@@ -326,19 +328,19 @@ type lteExpression struct {
 func (s *lteExpression) convert() interface{} {
 	return common.NewLteCommon(s.rightValue.convert(), s.leftValue.convert())
 }
-func (s *lteExpression) evaluateType() string {
+func (s *lteExpression) evaluateType() int {
 	 s.leftValue.evaluateType()
 	 s.rightValue.evaluateType()
-	return ""
+	return 0
 }
 type gteExpression struct {
 	rightValue expression
 	leftValue  expression
 }
-func (s *gteExpression) evaluateType() string {
+func (s *gteExpression) evaluateType() int {
 	 s.leftValue.evaluateType()
 	 s.rightValue.evaluateType()
-	return ""
+	return 0
 }
 func (s *gteExpression) convert() interface{} {
 	return common.NewGteCommon(s.rightValue.convert(), s.leftValue.convert())
@@ -348,10 +350,10 @@ type betweenExpression struct {
 	rightValue expression
 	leftValue  expression
 }
-func (s *betweenExpression) evaluateType() string {
+func (s *betweenExpression) evaluateType() int {
 	 s.leftValue.evaluateType()
 	 s.rightValue.evaluateType()
-	return ""
+	return 0
 }
 func (s *betweenExpression) convert() interface{} {
 	return common.NewBetweenCommon(s.rightValue.convert(), s.leftValue.convert())
@@ -361,10 +363,10 @@ type likeExpression struct {
 	rightValue expression
 	leftValue  expression
 }
-func (s *likeExpression) evaluateType() string {
+func (s *likeExpression) evaluateType() int {
 	 s.leftValue.evaluateType()
 	 s.rightValue.evaluateType()
-	return ""
+	return 0
 }
 func (s *likeExpression) convert() interface{} {
 	return common.NewLikeCommon(s.rightValue.convert(), s.leftValue.convert())
@@ -373,9 +375,9 @@ func (s *likeExpression) convert() interface{} {
 type notExpression struct {
 	not expression
 }
-func (s *notExpression) evaluateType() string {
+func (s *notExpression) evaluateType() int {
 	 s.not.evaluateType()
-	return ""
+	return 0
 	
 }
 func (s *notExpression) convert() interface{} {
@@ -386,10 +388,10 @@ type andExpression struct {
 	rightValue expression
 	leftValue  expression
 }
-func (s *andExpression) evaluateType() string {
+func (s *andExpression) evaluateType() int {
 	 s.leftValue.evaluateType()
 	 s.rightValue.evaluateType()
-	return ""
+	return 0
 }
 func (s *andExpression) convert() interface{} {
 	return common.NewAndCommon(s.rightValue.convert(), s.leftValue.convert())
@@ -404,16 +406,16 @@ type orExpression struct {
 func (s *orExpression) convert() interface{} {
 	return common.NewOrCommon(s.rightValue.convert(), s.leftValue.convert())
 }
-func (s *orExpression) evaluateType() string {
+func (s *orExpression) evaluateType() int {
 	 s.leftValue.evaluateType()
 	 s.rightValue.evaluateType()
-	return ""
+	return 0
 }
 type nullExpression struct {
 
 }
-func (s *nullExpression) evaluateType() string {
-	return ""
+func (s *nullExpression) evaluateType() int {
+	return 0
 }
 func (s *nullExpression) convert() interface{} {
 	return common.NewNullCommon()
@@ -421,8 +423,8 @@ func (s *nullExpression) convert() interface{} {
 
 type falseExpression struct {
 }
-func (s *falseExpression) evaluateType() string {
-	return ""
+func (s *falseExpression) evaluateType() int {
+	return 0
 }
 func (s *falseExpression) convert() interface{} {
 	return common.NewFalseCommon()
@@ -434,6 +436,6 @@ type trueExpression struct {
 func (s *trueExpression) convert() interface{} {
 	return common.NewTrueCommon()
 }
-func (s *trueExpression) evaluateType() string {
-	return ""
+func (s *trueExpression) evaluateType() int {
+	return 0
 }
