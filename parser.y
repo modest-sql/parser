@@ -30,14 +30,15 @@ var statements statementList
     assignments_list []assignment
     obj_list_t []interface{}
     string_list_t []string
-
+    group_by_t GroupBySpec
+    group_by_list_t []GroupBySpec
     obj_t interface{}
 }
 
 %token TK_PLUS TK_MINUS TK_STAR TK_DIV TK_LT TK_GT TK_GTE TK_LTE TK_EQ TK_NE
 %token TK_LEFT_PAR TK_RIGHT_PAR TK_COMMA TK_DOT TK_SEMICOLON
 %token KW_OR KW_AND KW_NOT KW_INTEGER KW_FLOAT KW_CHAR KW_BOOLEAN KW_DATETIME
-%token KW_PRIMARY KW_FOREIGN KW_KEY
+%token KW_PRIMARY KW_FOREIGN KW_KEY KW_BY
 %token KW_CREATE KW_TABLE KW_DELETE KW_INSERT
 %token KW_INTO KW_SELECT KW_WHERE KW_FROM KW_UPDATE KW_SET
 %token KW_ALTER KW_VALUES KW_BETWEEN KW_LIKE KW_INNER
@@ -72,7 +73,8 @@ var statements statementList
 %type<columnSpec_list_t>select_col_list 
 %type<joinSpec_list_t> opt_joins_list join_list
 %type<joinSpec_t> inner_join
-
+%type<group_by_t>op_groupBy 
+%type<group_by_list_t>op_groupBy_List
 %%
 
 input: statements_list { statements = $1 }
@@ -152,20 +154,39 @@ alter_instruction: KW_DROP KW_COLUMN TK_ID {$$ = &alterDrop{ $3 } }
 drop_statement: KW_DROP KW_TABLE TK_ID { $$ = &dropStatement{ $3 } }
 ;
 
-select_statement: KW_SELECT select_col_list KW_FROM TK_ID alias_spec opt_joins_list opt_where_clause { $$ = &selectStatement{$2,$4,$5,$6, $7} }
-    | KW_SELECT select_col_list KW_FROM TK_ID opt_where_clause { $$ = &selectStatement{$2,$4,"", nil, $5} }
+select_statement: KW_SELECT select_col_list KW_FROM TK_ID alias_spec opt_joins_list opt_where_clause op_groupBy_List { $$ = &selectStatement{$2,$4,$5,$6, $7,$8} }
+    | KW_SELECT select_col_list KW_FROM TK_ID opt_where_clause op_groupBy_List{ $$ = &selectStatement{$2,$4,"", nil, $5,$6} }
 ;
 
+op_groupBy_List:op_groupBy_List TK_COMMA  op_groupBy  { $$ = $1 ; $$ = append($$,$3) }
+                |op_groupBy { $$ = append($$,$1) }
+                | { $$ = nil }
+;
+
+op_groupBy:KW_GROUP KW_BY TK_ID { $$ = GroupBySpec{ $3,""} }
+        | KW_GROUP KW_BY TK_ID multipart_id_suffix {  $$ = GroupBySpec{ $3,$4} }
+        
+
+;
 select_col_list: select_col_list TK_COMMA select_col { $$ = $1 ; $$ = append($$,$3) }
     | select_col { $$ = append($$,$1) }
 ;
 
-select_col: TK_STAR { $$ = columnSpec{true,"","",""} }
-    | TK_ID alias_spec {$$ = columnSpec{false,$1,"",$2} }
-    | TK_ID { $$ = columnSpec{false,$1,"",""}}
-    | TK_ID multipart_id_suffix alias_spec { $$ = columnSpec{false,$1,$2,$3} }
-    | TK_ID multipart_id_suffix { $$ = columnSpec{false,$1,$2," "} }
-;
+select_col: TK_STAR { $$ = columnSpec{true,"","","",nil} }
+    | TK_ID alias_spec {$$ = columnSpec{false,$1,"",$2,nil} }
+    | TK_ID { $$ = columnSpec{false,$1,"","",nil}}
+    | TK_ID multipart_id_suffix alias_spec { $$ = columnSpec{false,$1,$2,$3,nil} }
+    | TK_ID multipart_id_suffix { $$ = columnSpec{false,$1,$2,"",nil} }
+    | KW_SUM TK_LEFT_PAR TK_ID TK_RIGHT_PAR { $$ = columnSpec{false,$3,"","",&functionSum{}}}
+    | KW_SUM TK_LEFT_PAR TK_ID multipart_id_suffix TK_RIGHT_PAR { $$ = columnSpec{false,$3,$4,"",&functionSum{}}}
+    | KW_COUNT TK_LEFT_PAR TK_ID TK_RIGHT_PAR { $$ = columnSpec{false,$3,"","",&functionCount{}}}
+    | KW_COUNT TK_LEFT_PAR TK_ID multipart_id_suffix TK_RIGHT_PAR { $$ = columnSpec{false,$3,$4,"",&functionCount{}}}
+    | KW_AVG TK_LEFT_PAR TK_ID TK_RIGHT_PAR { $$ = columnSpec{false,$3,"","",&functionAvg{}}}
+    | KW_AVG TK_LEFT_PAR TK_ID multipart_id_suffix TK_RIGHT_PAR { $$ = columnSpec{false,$3,$4,"",&functionAvg{}}}
+    | KW_MIN TK_LEFT_PAR TK_ID TK_RIGHT_PAR { $$ = columnSpec{false,$3,"","",&functionMin{}}}
+    | KW_MIN TK_LEFT_PAR TK_ID multipart_id_suffix TK_RIGHT_PAR { $$ = columnSpec{false,$3,$4,"",&functionMin{}}}
+    | KW_MAX TK_LEFT_PAR TK_ID TK_RIGHT_PAR { $$ = columnSpec{false,$3,"","",&functionMax{}}}
+    | KW_MAX TK_LEFT_PAR TK_ID multipart_id_suffix TK_RIGHT_PAR { $$ = columnSpec{false,$3,$4,"",&functionMax{}}}
 
 insert_statement: KW_INSERT KW_INTO TK_ID TK_LEFT_PAR column_names_list TK_RIGHT_PAR KW_VALUES values_tuples_list {  $$ = &insertStatement{$3,$5,$8} }
     | KW_INSERT KW_INTO TK_ID KW_VALUES values_tuples_list {  $$ = &insertStatement{$3, nil, $5} }
