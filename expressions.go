@@ -2,6 +2,12 @@ package parser
 
 import "github.com/modest-sql/common"
 
+const constfloat = "float"
+const constint = "int"
+const conststring = "string"
+const constid = "id"
+const constbool = "bool"
+
 type expression interface {
 	convert() interface{}
 	sintactico() string
@@ -31,7 +37,7 @@ func (s *idExpression) convert() interface{} {
 }
 
 func (s *idExpression) sintactico() string {
-	return "id"
+	return constid
 }
 type intExpression struct {
 	value int64
@@ -42,7 +48,7 @@ func (s *intExpression) convert() interface{} {
 }
 
 func (s *intExpression) sintactico() string {
-	return "int"
+	return constint
 }
 type boolExpression struct {
 	value bool
@@ -53,7 +59,7 @@ func (s *boolExpression) convert() interface{} {
 }
 
 func (s *boolExpression) sintactico() string {
-	return "bool"
+	return constbool
 }
 
 type floatExpression struct {
@@ -65,7 +71,7 @@ func (s *floatExpression) convert() interface{} {
 }
 
 func (s *floatExpression) sintactico() string {
-	return "float"
+	return constfloat
 }
 
 type stringExpression struct {
@@ -77,7 +83,7 @@ func (s *stringExpression) convert() interface{} {
 }
 
 func (s *stringExpression) sintactico() string {
-	return "string"
+	return conststring
 }
 
 type sumExpression struct {
@@ -118,14 +124,16 @@ func (s *sumExpression) convert() interface{} {
 func (s *sumExpression) sintactico() string {
 	v1 := s.leftValue.sintactico()
 	v2 := s.rightValue.sintactico()
-	if v1=="string"||v2=="string" {
-		return "string"
-	}else if (v1=="float"&&v2=="float")||(v1=="int"&&v2=="float")||(v1=="float"&&v2=="int"){
-		return "float"
-	}else if((v1=="int"&&v2=="bool")||(v1=="int"&&v2=="bool")||(v1=="int"&&v2=="int")){
-		return "int"
+	if v1==conststring||v2==conststring {
+		return conststring
+	}else if (v1==constfloat&&v2==constfloat)||(v1==constint&&v2==constfloat)||(v1==constfloat&&v2==constint){
+		return constfloat
+	}else if((v1==constint&&v2==constbool)||(v1==constint&&v2==constbool)||(v1==constint&&v2==constint)){
+		return constint
+	}else if(v1==constid||v2==constid){
+		return constid
 	}
-	panic(true)
+	panic("incompatible datatype")
 }
 
 type subExpression struct {
@@ -135,12 +143,14 @@ type subExpression struct {
 func (s *subExpression) sintactico() string {
 	v1 := s.leftValue.sintactico()
 	v2 := s.rightValue.sintactico()
-	 if (v1=="float"&&v2=="float")||(v1=="int"&&v2=="float")||(v1=="float"&&v2=="int"){
-		return "float"
-	}else if((v1=="int"&&v2=="bool")||(v1=="int"&&v2=="bool")||(v1=="int"&&v2=="int")){
-		return "int"
+	if (v1== constfloat && v2==constfloat)||(v1==constint&&v2==constfloat)||(v1==constfloat&&v2==constint){
+		return constfloat
+	}else if((v1==constint&&v2==constbool)||(v1==constint&&v2==constbool)||(v1==constint&&v2==constint)){
+		return constint
+	}else if(v1==constid||v2==constid){
+		return constid
 	}
-	panic(true)
+	panic("incompatible datatype")
 }
 
 func (s *subExpression) convert() interface{} {
@@ -176,12 +186,14 @@ type multExpression struct {
 func (s *multExpression) sintactico() string {
 	v1 := s.leftValue.sintactico()
 	v2 := s.rightValue.sintactico()
-	 if ((v1=="float"&&v2=="float")||(v1=="int"&&v2=="float")||(v1=="float"&&v2=="int")){
-		return "float"
-	}else if((v1=="int"&&v2=="bool")||(v1=="int"&&v2=="bool")||(v1=="int"&&v2=="int")){
-		return "int"
+	 if ((v1==constfloat&&v2==constfloat)||(v1==constint&&v2==constfloat)||(v1==constfloat&&v2==constint)){
+		return constfloat
+	}else if((v1==constint&&v2==constbool)||(v1==constint&&v2==constbool)||(v1==constint&&v2==constint)){
+		return constint
+	}else if(v1==constid||v2==constid){
+		return constid
 	}
-	panic(true)
+	panic("incompatible datatype")
 }
 func (s *multExpression) convert() interface{} {
 	switch v1 := s.leftValue.(type) {
@@ -214,13 +226,15 @@ type divExpression struct {
 func (s *divExpression) sintactico() string {
 	v1 := s.leftValue.sintactico()
 	v2 := s.rightValue.sintactico()
-	 if ((v1=="float"&&v2=="float")||(v1=="int"&&v2=="float")||(v1=="float"&&v2=="int")){
-		return "float"
-	 }else if((v1=="int"&&v2=="bool")||(v1=="int"&&v2=="bool")||(v1=="int"&&v2=="int")){
-		return "int"
-	 }
+	 if ((v1==constfloat&&v2==constfloat)||(v1==constint&&v2==constfloat)||(v1==constfloat&&v2==constint)){
+		return constfloat
+	 }else if((v1==constint&&v2==constbool)||(v1==constint&&v2==constbool)||(v1==constint&&v2==constint)){
+		return constint
+	 }else if(v1==constid||v2==constid){
+		return constid
+	}
 
-	panic(true)
+	panic("incompatible datatype")
 }
 
 func (s *divExpression) convert() interface{} {
