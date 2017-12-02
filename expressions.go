@@ -4,6 +4,7 @@ import "github.com/modest-sql/common"
 
 type expression interface {
 	convert() interface{}
+	sintactico() string
 }
 
 type assignment struct {
@@ -15,6 +16,11 @@ func (s *assignment) convert() interface{} {
 	return common.NewAssignmentCommon(s.identifier, s.value.convert())
 }
 
+func (s *assignment) sintactico() string {
+	s.value.sintactico()
+	return "assignment"
+}
+
 type idExpression struct {
 	name  string
 	alias string
@@ -24,6 +30,9 @@ func (s *idExpression) convert() interface{} {
 	return common.NewIdCommon(s.name, s.alias)
 }
 
+func (s *idExpression) sintactico() string {
+	return "id"
+}
 type intExpression struct {
 	value int64
 }
@@ -32,12 +41,19 @@ func (s *intExpression) convert() interface{} {
 	return common.NewIntCommon(s.value)
 }
 
+func (s *intExpression) sintactico() string {
+	return "int"
+}
 type boolExpression struct {
 	value bool
 }
 
 func (s *boolExpression) convert() interface{} {
 	return common.NewBoolCommon(s.value)
+}
+
+func (s *boolExpression) sintactico() string {
+	return "bool"
 }
 
 type floatExpression struct {
@@ -48,12 +64,20 @@ func (s *floatExpression) convert() interface{} {
 	return common.NewFloatCommon(s.value)
 }
 
+func (s *floatExpression) sintactico() string {
+	return "float"
+}
+
 type stringExpression struct {
 	value string
 }
 
 func (s *stringExpression) convert() interface{} {
 	return common.NewStringCommon(s.value)
+}
+
+func (s *stringExpression) sintactico() string {
+	return "string"
 }
 
 type sumExpression struct {
@@ -91,10 +115,32 @@ func (s *sumExpression) convert() interface{} {
 	}
 	return common.NewSumCommon(s.rightValue.convert(), s.leftValue.convert())
 }
+func (s *sumExpression) sintactico() string {
+	v1 := s.leftValue.sintactico()
+	v2 := s.rightValue.sintactico()
+	if v1=="string"||v2=="string" {
+		return "string"
+	}else if (v1=="float"&&v2=="float")||(v1=="int"&&v2=="float")||(v1=="float"&&v2=="int"){
+		return "float"
+	}else if((v1=="int"&&v2=="bool")||(v1=="int"&&v2=="bool")||(v1=="int"&&v2=="int")){
+		return "int"
+	}
+	panic(true)
+}
 
 type subExpression struct {
 	rightValue expression
 	leftValue  expression
+}
+func (s *subExpression) sintactico() string {
+	v1 := s.leftValue.sintactico()
+	v2 := s.rightValue.sintactico()
+	 if (v1=="float"&&v2=="float")||(v1=="int"&&v2=="float")||(v1=="float"&&v2=="int"){
+		return "float"
+	}else if((v1=="int"&&v2=="bool")||(v1=="int"&&v2=="bool")||(v1=="int"&&v2=="int")){
+		return "int"
+	}
+	panic(true)
 }
 
 func (s *subExpression) convert() interface{} {
@@ -126,6 +172,17 @@ type multExpression struct {
 	leftValue  expression
 }
 
+
+func (s *multExpression) sintactico() string {
+	v1 := s.leftValue.sintactico()
+	v2 := s.rightValue.sintactico()
+	 if ((v1=="float"&&v2=="float")||(v1=="int"&&v2=="float")||(v1=="float"&&v2=="int")){
+		return "float"
+	}else if((v1=="int"&&v2=="bool")||(v1=="int"&&v2=="bool")||(v1=="int"&&v2=="int")){
+		return "int"
+	}
+	panic(true)
+}
 func (s *multExpression) convert() interface{} {
 	switch v1 := s.leftValue.(type) {
 	case *intExpression:
@@ -153,6 +210,17 @@ func (s *multExpression) convert() interface{} {
 type divExpression struct {
 	rightValue expression
 	leftValue  expression
+}
+func (s *divExpression) sintactico() string {
+	v1 := s.leftValue.sintactico()
+	v2 := s.rightValue.sintactico()
+	 if ((v1=="float"&&v2=="float")||(v1=="int"&&v2=="float")||(v1=="float"&&v2=="int")){
+		return "float"
+	 }else if((v1=="int"&&v2=="bool")||(v1=="int"&&v2=="bool")||(v1=="int"&&v2=="int")){
+		return "int"
+	 }
+
+	panic(true)
 }
 
 func (s *divExpression) convert() interface{} {
@@ -183,7 +251,11 @@ type eqExpression struct {
 	rightValue expression
 	leftValue  expression
 }
-
+func (s *eqExpression) sintactico() string {
+	 s.leftValue.sintactico()
+	 s.rightValue.sintactico()
+	return ""
+}
 func (s *eqExpression) convert() interface{} {
 	return common.NewEqCommon(s.rightValue.convert(), s.leftValue.convert())
 }
@@ -191,6 +263,11 @@ func (s *eqExpression) convert() interface{} {
 type neExpression struct {
 	rightValue expression
 	leftValue  expression
+}
+func (s *neExpression) sintactico() string {
+	 s.leftValue.sintactico()
+	 s.rightValue.sintactico()
+	return ""
 }
 
 func (s *neExpression) convert() interface{} {
@@ -200,6 +277,11 @@ func (s *neExpression) convert() interface{} {
 type ltExpression struct {
 	rightValue expression
 	leftValue  expression
+}
+func (s *ltExpression) sintactico() string {
+	 s.leftValue.sintactico()
+	 s.rightValue.sintactico()
+	return ""
 }
 
 func (s *ltExpression) convert() interface{} {
@@ -211,9 +293,16 @@ type gtExpression struct {
 	leftValue  expression
 }
 
+func (s *gtExpression) sintactico() string {
+	 s.leftValue.sintactico()
+	 s.rightValue.sintactico()
+	return ""
+}
+
 func (s *gtExpression) convert() interface{} {
 	return common.NewGtCommon(s.rightValue.convert(), s.leftValue.convert())
 }
+
 
 type lteExpression struct {
 	rightValue expression
@@ -223,12 +312,20 @@ type lteExpression struct {
 func (s *lteExpression) convert() interface{} {
 	return common.NewLteCommon(s.rightValue.convert(), s.leftValue.convert())
 }
-
+func (s *lteExpression) sintactico() string {
+	 s.leftValue.sintactico()
+	 s.rightValue.sintactico()
+	return ""
+}
 type gteExpression struct {
 	rightValue expression
 	leftValue  expression
 }
-
+func (s *gteExpression) sintactico() string {
+	 s.leftValue.sintactico()
+	 s.rightValue.sintactico()
+	return ""
+}
 func (s *gteExpression) convert() interface{} {
 	return common.NewGteCommon(s.rightValue.convert(), s.leftValue.convert())
 }
@@ -237,7 +334,11 @@ type betweenExpression struct {
 	rightValue expression
 	leftValue  expression
 }
-
+func (s *betweenExpression) sintactico() string {
+	 s.leftValue.sintactico()
+	 s.rightValue.sintactico()
+	return ""
+}
 func (s *betweenExpression) convert() interface{} {
 	return common.NewBetweenCommon(s.rightValue.convert(), s.leftValue.convert())
 }
@@ -246,7 +347,11 @@ type likeExpression struct {
 	rightValue expression
 	leftValue  expression
 }
-
+func (s *likeExpression) sintactico() string {
+	 s.leftValue.sintactico()
+	 s.rightValue.sintactico()
+	return ""
+}
 func (s *likeExpression) convert() interface{} {
 	return common.NewLikeCommon(s.rightValue.convert(), s.leftValue.convert())
 }
@@ -254,7 +359,11 @@ func (s *likeExpression) convert() interface{} {
 type notExpression struct {
 	not expression
 }
-
+func (s *notExpression) sintactico() string {
+	 s.not.sintactico()
+	return ""
+	
+}
 func (s *notExpression) convert() interface{} {
 	return common.NewNotCommon(s.not.convert())
 }
@@ -263,7 +372,11 @@ type andExpression struct {
 	rightValue expression
 	leftValue  expression
 }
-
+func (s *andExpression) sintactico() string {
+	 s.leftValue.sintactico()
+	 s.rightValue.sintactico()
+	return ""
+}
 func (s *andExpression) convert() interface{} {
 	return common.NewAndCommon(s.rightValue.convert(), s.leftValue.convert())
 }
@@ -273,20 +386,30 @@ type orExpression struct {
 	leftValue  expression
 }
 
+
 func (s *orExpression) convert() interface{} {
 	return common.NewOrCommon(s.rightValue.convert(), s.leftValue.convert())
 }
-
-type nullExpression struct {
+func (s *orExpression) sintactico() string {
+	 s.leftValue.sintactico()
+	 s.rightValue.sintactico()
+	return ""
 }
+type nullExpression struct {
 
+}
+func (s *nullExpression) sintactico() string {
+	return ""
+}
 func (s *nullExpression) convert() interface{} {
 	return common.NewNullCommon()
 }
 
 type falseExpression struct {
 }
-
+func (s *falseExpression) sintactico() string {
+	return ""
+}
 func (s *falseExpression) convert() interface{} {
 	return common.NewFalseCommon()
 }
@@ -296,4 +419,7 @@ type trueExpression struct {
 
 func (s *trueExpression) convert() interface{} {
 	return common.NewTrueCommon()
+}
+func (s *trueExpression) sintactico() string {
+	return ""
 }
