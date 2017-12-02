@@ -4,11 +4,11 @@ import "github.com/modest-sql/common"
 
 const (
 	constfloat = iota
-	constint = iota
-	conststring = iota
-	constid = iota
-	constbool = iota
-	constassignment = iota
+	constint 
+	conststring 
+	constid 
+	constbool 
+	constassignment 
 )
 type expression interface {
 	convert() interface{}
