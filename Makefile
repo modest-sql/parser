@@ -13,8 +13,5 @@ $(PARSER_SRC): parser.y
 $(LEXER_SRC): parser.nex
 	nex -e -o $@ $<
 
-run: $(TARGET)
-	./$< < input.txt
-
 clean:
 	rm -f $(TARGET) $(PARSER_SRC) $(LEXER_SRC) *.output
