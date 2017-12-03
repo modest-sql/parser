@@ -3,10 +3,13 @@
 %{
 package parser
 
-import "io"
-/*import "github.com/modest-sql/common"*/
+import (
+    "io"
+    "sync"
+)
 
 var statements statementList
+var lock sync.Mutex
 
 %}
 
@@ -77,7 +80,7 @@ var statements statementList
 %type<group_by_list_t>op_groupBy_List
 %%
 
-input: statements_list { statements = $1 }
+input: statements_list { lock.Lock(); statements = $1; }
     | { }
 ;
 
@@ -163,7 +166,7 @@ op_groupBy_List:op_groupBy_List TK_COMMA  op_groupBy  { $$ = $1 ; $$ = append($$
                 | { $$ = nil }
 ;
 
-op_groupBy:KW_GROUP KW_BY TK_ID { $$ = GroupBySpec{ $3,""} }
+op_groupBy:KW_GROUP KW_BY TK_ID { $$ = GroupBySpec{ "",$3} }
         | KW_GROUP KW_BY TK_ID multipart_id_suffix {  $$ = GroupBySpec{ $3,$4} }
         
 
@@ -323,6 +326,8 @@ func Parse(in io.Reader) (commands []interface{}, err error) {
     defer func() {
         if r := recover(); r != nil {
             err = r.(error)
+        }else{
+            lock.Unlock()
         }
     }()    
 

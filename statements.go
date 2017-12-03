@@ -130,8 +130,8 @@ type functionMax struct{
 	
 }
 type GroupBySpec struct{
-	column string
-	alias  string
+	table string
+	column  string
 }
 
 type selectStatement struct {
