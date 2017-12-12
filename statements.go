@@ -114,6 +114,10 @@ type columnSpec struct {
 	alias  string
 	function interface{}
 }
+
+func (s *columnSpec) convert() interface{} {
+	return common.NewTableColumnSelector(s.isStar,s.table,s.column,s.alias,s.function)
+}
 type functionSum struct{
 
 }
@@ -134,6 +138,9 @@ type GroupBySpec struct{
 	column  string
 }
 
+func (s *GroupBySpec) convert() interface{} {
+	return common.NewGroupBySelect(s.table,s.column)
+}
 type selectStatement struct {
 	selectColumns   []columnSpec
 	mainTable string
@@ -143,13 +150,34 @@ type selectStatement struct {
 	groupBy  []GroupBySpec
 }
 
+
 type joinSpec struct {
 	targetTable string
 	targetAlias string
 	filterCriteria expression
 }
+
+func (s *joinSpec) convert() interface{} {
+	return common.NewJoinSelect(s.targetTable,s.targetAlias,s.filterCriteria.convert())
+}
 func (s *selectStatement) convert() interface{} {
-	return common.NewSelectTableCommand(s.mainTable)
+	var tablecolumm common.TableColumnSelectors
+	for _, column := range s.selectColumns {
+		tablecolumm = append(tablecolumm,column.convert())
+	}
+
+	var tablejoin []common.JoinSelect
+	for _, join := range s.joinList {
+		s := join.convert().(common.JoinSelect)
+		tablejoin = append(tablejoin,s)
+	}
+
+	var tablegroupBy []common.GroupBySelect
+	for _, group := range s.groupBy {
+		s := group.convert().(common.GroupBySelect)
+		tablegroupBy = append(tablegroupBy,s)
+	}
+	return common.NewSelectTableCommand(s.mainTable,s.mainAlias,tablecolumm,tablejoin,s.whereExpression.convert(),tablegroupBy)
 }
 
 func (s *selectStatement) execute() error {
