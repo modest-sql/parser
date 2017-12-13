@@ -1,9 +1,9 @@
-//line parser.y:3
+//line parser.y:4
 package parser
 
 import __yyfmt__ "fmt"
 
-//line parser.y:5
+//line parser.y:4
 import (
 	"io"
 	"sync"
@@ -198,10 +198,11 @@ func (l *Lexer) Error(s string) {
 }
 
 func Parse(in io.Reader) (commands []interface{}, err error) {
-	defer lock.Unlock()
 	defer func() {
 		if r := recover(); r != nil {
 			err = r.(error)
+		} else {
+			lock.Unlock()
 		}
 	}()
 
