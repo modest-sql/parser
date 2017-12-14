@@ -88,10 +88,15 @@ type updateStatement struct {
 func (s *updateStatement) convert() interface{} {
 	var assCommon []*common.AssignmentCommon
 	for _, ass := range s.assignments {
-		a:=  ass.convert().(*common.AssignmentCommon)
+		a := ass.convert().(*common.AssignmentCommon)
 		assCommon = append(assCommon, a)
 	}
-	return common.NewUpdateTableCommand(s.table, assCommon, s.whereExpression.convert() )
+
+	var condition common.Expression
+	if s.whereExpression != nil {
+		condition = s.whereExpression.convert()
+	}
+	return common.NewUpdateTableCommand(s.table, assCommon, condition)
 }
 
 func (s *updateStatement) execute() error {
@@ -105,7 +110,11 @@ type deleteStatement struct {
 }
 
 func (s *deleteStatement) convert() interface{} {
-	return common.NewDeleteTableCommand(s.table, s.alias, s.whereExpression.convert())
+	var condition common.Expression
+	if s.whereExpression != nil {
+		condition = s.whereExpression.convert()
+	}
+	return common.NewDeleteTableCommand(s.table, s.alias, condition)
 }
 
 func (s *deleteStatement) execute() error {
@@ -113,76 +122,77 @@ func (s *deleteStatement) execute() error {
 }
 
 type columnSpec struct {
-	isStar bool
-	table  string
-	column string
-	alias  string
+	isStar   bool
+	table    string
+	column   string
+	alias    string
 	function interface{}
 }
 
 func (s *columnSpec) convert() interface{} {
-	return common.NewTableColumnSelector(s.isStar,s.table,s.column,s.alias,s.function)
+	return common.NewTableColumnSelector(s.isStar, s.table, s.column, s.alias, s.function)
 }
-type functionSum struct{
 
+type functionSum struct {
 }
-type functionCount struct{
-	
+type functionCount struct {
 }
-type functionAvg struct{
-	
+type functionAvg struct {
 }
-type functionMin struct{
-	
+type functionMin struct {
 }
-type functionMax struct{
-	
+type functionMax struct {
 }
-type GroupBySpec struct{
-	table string
-	column  string
+type GroupBySpec struct {
+	table  string
+	column string
 }
 
 func (s *GroupBySpec) convert() interface{} {
-	return common.NewGroupBySelect(s.table,s.column)
+	return common.NewGroupBySelect(s.table, s.column)
 }
+
 type selectStatement struct {
 	selectColumns   []columnSpec
-	mainTable string
-	mainAlias string
-	joinList []joinSpec
+	mainTable       string
+	mainAlias       string
+	joinList        []joinSpec
 	whereExpression expression
-	groupBy  []GroupBySpec
+	groupBy         []GroupBySpec
 }
 
-
 type joinSpec struct {
-	targetTable string
-	targetAlias string
+	targetTable    string
+	targetAlias    string
 	filterCriteria expression
 }
 
 func (s *joinSpec) convert() interface{} {
-	return common.NewJoinSelect(s.targetTable,s.targetAlias,s.filterCriteria.convert())
+	return common.NewJoinSelect(s.targetTable, s.targetAlias, s.filterCriteria.convert())
 }
 func (s *selectStatement) convert() interface{} {
 	var tablecolumm common.TableColumnSelectors
 	for _, column := range s.selectColumns {
-		tablecolumm = append(tablecolumm,column.convert())
+		tablecolumm = append(tablecolumm, column.convert())
 	}
 
 	var tablejoin []common.JoinSelect
 	for _, join := range s.joinList {
-		s := join.convert().(common.JoinSelect)
-		tablejoin = append(tablejoin,s)
+		s := join.convert().(*common.JoinSelect)
+		tablejoin = append(tablejoin, *s)
 	}
 
 	var tablegroupBy []common.GroupBySelect
 	for _, group := range s.groupBy {
 		s := group.convert().(common.GroupBySelect)
-		tablegroupBy = append(tablegroupBy,s)
+		tablegroupBy = append(tablegroupBy, s)
 	}
-	return common.NewSelectTableCommand(s.mainTable,s.mainAlias,tablecolumm,tablejoin,s.whereExpression.convert(),tablegroupBy)
+
+	var condition common.Expression
+	if s.whereExpression != nil {
+		condition = s.whereExpression.convert()
+	}
+	return common.NewSelectTableCommand(s.mainTable, s.mainAlias, tablecolumm, tablejoin, condition, tablegroupBy)
 }
 
 func (s *selectStatement) execute() error {
