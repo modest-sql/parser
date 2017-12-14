@@ -198,10 +198,11 @@ func (l *Lexer) Error(s string) {
 }
 
 func Parse(in io.Reader) (commands []interface{}, err error) {
-	defer lock.Unlock()
 	defer func() {
 		if r := recover(); r != nil {
 			err = r.(error)
+		} else {
+			lock.Unlock()
 		}
 	}()
 
