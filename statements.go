@@ -86,9 +86,9 @@ type updateStatement struct {
 }
 
 func (s *updateStatement) convert() interface{} {
-	var assCommon []common.AssignmentCommon
+	var assCommon []*common.AssignmentCommon
 	for _, ass := range s.assignments {
-		a:=  ass.convert().(common.AssignmentCommon)
+		a:=  ass.convert().(*common.AssignmentCommon)
 		assCommon = append(assCommon, a)
 	}
 	return common.NewUpdateTableCommand(s.table, assCommon, s.whereExpression.convert() )
