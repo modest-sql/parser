@@ -86,7 +86,12 @@ type updateStatement struct {
 }
 
 func (s *updateStatement) convert() interface{} {
-	return nil
+	var assCommon []*common.AssignmentCommon
+	for _, ass := range s.assignments {
+		a:=  ass.convert().(*common.AssignmentCommon)
+		assCommon = append(assCommon, a)
+	}
+	return common.NewUpdateTableCommand(s.table, assCommon, s.whereExpression.convert() )
 }
 
 func (s *updateStatement) execute() error {
@@ -100,7 +105,7 @@ type deleteStatement struct {
 }
 
 func (s *deleteStatement) convert() interface{} {
-	return nil
+	return common.NewDeleteTableCommand(s.table, s.alias, s.whereExpression.convert())
 }
 
 func (s *deleteStatement) execute() error {
