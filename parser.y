@@ -158,7 +158,7 @@ drop_statement: KW_DROP KW_TABLE TK_ID { $$ = &dropStatement{ $3 } }
 ;
 
 select_statement: KW_SELECT select_col_list KW_FROM TK_ID alias_spec opt_joins_list opt_where_clause op_groupBy_List { $$ = &selectStatement{$2,$4,$5,$6, $7,$8} }
-    | KW_SELECT select_col_list KW_FROM TK_ID opt_where_clause op_groupBy_List{ $$ = &selectStatement{$2,$4,"", nil, $5,$6} }
+    | KW_SELECT select_col_list KW_FROM TK_ID opt_joins_list opt_where_clause op_groupBy_List { $$ = &selectStatement{$2,$4,"", $5, $6,$7} }
 ;
 
 op_groupBy_List:op_groupBy_List TK_COMMA  op_groupBy  { $$ = $1 ; $$ = append($$,$3) }
