@@ -228,8 +228,8 @@ inner_join: KW_INNER KW_JOIN TK_ID alias_spec KW_ON search_condition { $$ = join
     | KW_INNER KW_JOIN TK_ID KW_ON search_condition { $$ = joinSpec{ $3, "", $5 } }
 ;
 
-delete_statement: KW_DELETE TK_ID alias_spec opt_where_clause { $$ = &deleteStatement{$2,$3,$4} }
-    | KW_DELETE TK_ID opt_where_clause { $$ = &deleteStatement{$2,"",$3} }
+delete_statement: KW_DELETE KW_FROM TK_ID alias_spec opt_where_clause { $$ = &deleteStatement{$3,$4,$5} }
+    | KW_DELETE KW_FROM TK_ID opt_where_clause { $$ = &deleteStatement{$3,"",$4} }
 ;
 
 alias_spec: KW_AS TK_ID { $$ = $2 }
