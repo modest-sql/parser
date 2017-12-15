@@ -229,7 +229,9 @@ inner_join: KW_INNER KW_JOIN TK_ID alias_spec KW_ON search_condition { $$ = join
 ;
 
 delete_statement: KW_DELETE TK_ID alias_spec opt_where_clause { $$ = &deleteStatement{$2,$3,$4} }
+    | KW_DELETE KW_FROM TK_ID alias_spec opt_where_clause { $$ = &deleteStatement{$3,$4,$5} }
     | KW_DELETE TK_ID opt_where_clause { $$ = &deleteStatement{$2,"",$3} }
+    | KW_DELETE KW_FROM TK_ID opt_where_clause { $$ = &deleteStatement{$3,"",$4} }
 ;
 
 alias_spec: KW_AS TK_ID { $$ = $2 }
@@ -324,9 +326,10 @@ func (l *Lexer) Error(s string) {
 
 func Parse(in io.Reader) (commands []interface{}, err error) {
     defer func() {
-        lock.Unlock()
         if r := recover(); r != nil {
             err = r.(error)
+        }else{
+            lock.Unlock()
         }
     }()    
 
